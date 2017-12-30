@@ -34,7 +34,7 @@ viewToolbar model =
 
 
 viewToolbarButton cmdMsg cmdLabel =
-    Html.button [ Html.Events.onClick <| Msg.ChangeCommand cmdMsg ] [ Html.text cmdLabel ]
+    Html.button [ Html.Events.onClick <| cmdMsg ] [ Html.text cmdLabel ]
 
 
 

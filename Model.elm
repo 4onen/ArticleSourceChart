@@ -1,11 +1,12 @@
 module Model exposing (..)
 
+import Point exposing (Point)
 import Article exposing (Article)
 import ArticleId exposing (ArticleId)
 
 
 type Command
-    = Add (Maybe Point)
+    = Add (Maybe ArticleId)
     | Delete ()
 
 
