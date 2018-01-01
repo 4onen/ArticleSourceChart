@@ -11,11 +11,7 @@ import Model exposing (..)
 import Msg exposing (..)
 import Update exposing (update)
 import View exposing (view)
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
+import Subs exposing (subscriptions)
 
 
 main =
