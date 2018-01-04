@@ -15,7 +15,7 @@ import Subs exposing (subscriptions)
 
 
 main =
-    Html.program
+    Html.programWithFlags
         { init = init
         , view = view
         , update = update

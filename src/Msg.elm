@@ -12,6 +12,13 @@ type Command
     | Delete
     | Linking (Maybe ArticleId)
     | Unlinking (Maybe ArticleId)
+    | Exporting ExportModel
+
+
+type alias ExportModel =
+    { previousCommand : Command
+    , copyResult : Maybe Bool
+    }
 
 
 type CommandSwitch
@@ -20,10 +27,12 @@ type CommandSwitch
     | ToDelete
     | ToLinking
     | ToUnlinking
+    | ToExporting
 
 
 type Msg
-    = SwitchTo CommandSwitch
+    = NameChange String
+    | SwitchTo CommandSwitch
     | DrawspaceClick Point
     | Select ArticleId Point
     | ChangeContent ArticleField

@@ -16,6 +16,8 @@ import Svg.Attributes as SAttr
 import Point exposing (Point)
 import SpecialEvents exposing (onClickPoint, onClickNoPassthrough)
 import Drag
+import Interop
+import Export
 import Linked exposing (Linked)
 import Article exposing (Article, ArticleField(..))
 import ArticleId exposing (ArticleId)
@@ -33,6 +35,9 @@ view model =
 
                 _ ->
                     viewArticleTree model
+
+        Exporting m ->
+            Export.viewExportBox model m
 
         _ ->
             viewArticleTree model
@@ -57,7 +62,8 @@ viewArticle : Linked Article -> Html Msg
 viewArticle a =
     Html.div
         [ HAttr.style
-            [ ( "height", "100%" )
+            [ "position" => "fixed"
+            , ( "height", "100%" )
             , ( "width", "100%" )
             , ( "background-color", "aliceblue" )
             ]
@@ -67,13 +73,16 @@ viewArticle a =
                 [ ( "height", "40em" )
                 , ( "width", "35em" )
                 , ( "margin", "auto" )
+                , ( "margin-top", "1em" )
                 , ( "background-color", "white" )
                 , ( "border", "1px solid black" )
                 , ( "border-radius", "1em" )
                 ]
             , Html.Events.onSubmit (SwitchTo ToAdd)
             ]
-            [ Html.h3 displayBlock [ Html.text "Headline:" ]
+            [ Html.h3 
+                ((HAttr.style ["padding-top"=>"1em"])::displayBlock)
+                [ Html.text "Headline:" ]
             , Html.input
                 (displayBlock
                     ++ [ HAttr.type_ "text"
@@ -131,17 +140,36 @@ viewToolbar model =
     let
         toolbarStyle =
             [ HAttr.style
-                [ ( "position", "absolute" )
-                , ( "top", "0" )
-                , ( "left", "0" )
+                [ "position" => "absolute"
+                , "width" => "100%"
+                , "height" => "3em"
+                , "top" => "0"
+                , "left" => "0"
+                , "font-size" => "150%"
+                , "background-color" => "white"
+                , "border-bottom" => "1px solid black"
                 ]
             ]
 
-        labelList =
-            [ "Drag", "Add/Edit", "Delete", "Link", "Unlink" ]
+        nameWidth =
+            model.name
+                |> String.length
+                |> max 16
+                |> toFloat
+                |> (flip (/) 2)
+                |> ((+) 0.5)
+                |> round
+                |> toString
+                |> (flip (++) "em")
 
-        switchCommandList =
-            [ ToDrag, ToAdd, ToDelete, ToLinking, ToUnlinking ]
+        ( msgList, labelList ) =
+            List.unzip
+                [ ( ToDrag, "Drag" )
+                , ( ToAdd, "Add/Edit" )
+                , ( ToDelete, "Delete" )
+                , ( ToLinking, "Link" )
+                , ( ToUnlinking, "Unlink" )
+                ]
 
         highlightIndex =
             case model.command of
@@ -160,13 +188,36 @@ viewToolbar model =
                 Unlinking _ ->
                     4
 
+                Exporting _ ->
+                    5
+
         highlightBoolList =
             List.map (\n -> n == highlightIndex) (List.range 0 4)
 
         buttonList =
-            List.map3 viewToolbarButton switchCommandList labelList highlightBoolList
+            List.map3 viewToolbarButton msgList labelList highlightBoolList
+                |> List.reverse
+                |> (::) (viewToolbarButton ToExporting "Export" (5 == highlightIndex))
+                |> List.reverse
     in
-        Html.div toolbarStyle buttonList
+        Html.div
+            (toolbarStyle)
+            (Html.input
+                [ HAttr.type_ "text"
+                , HAttr.style
+                    [ "display" => "block"
+                    , "width" => nameWidth
+                    , "height" => "1em"
+                    , "max-width" => "99%"
+                    , "font-size" => "1em"
+                    ]
+                , HAttr.value model.name
+                , HAttr.placeholder "<Untitled Chart>"
+                , Html.Events.onInput NameChange
+                ]
+                []
+                :: buttonList
+            )
 
 
 viewToolbarButton : CommandSwitch -> String -> Bool -> Html Msg
@@ -174,14 +225,13 @@ viewToolbarButton cmdMsg cmdLabel highlight =
     Html.button
         [ SpecialEvents.onClickNoPassthrough (SwitchTo cmdMsg)
         , HAttr.style
-            [ ( "font-size", "200%" )
-            , ( "margin", "0.2em" )
-            , ( "background-color"
-              , if highlight then
+            [ "margin" => "0.2em"
+            , "font-size" => "1em"
+            , "background-color"
+                => if highlight then
                     "wheat"
-                else
+                   else
                     "white"
-              )
             ]
         ]
         [ Html.text cmdLabel ]
@@ -198,13 +248,15 @@ viewDrawSpace model =
             case model.command of
                 Add _ ->
                     "cell"
+                Exporting _ ->
+                    "alias"
 
                 _ ->
                     "auto"
     in
         Html.div
             ([ HAttr.style
-                [ ( "height", "100%" )
+                [ ( "height", "99.9%" )
                 , ( "width", "100%" )
                 ]
              ]
@@ -271,6 +323,9 @@ viewArticleBox model id article =
 
                 Unlinking _ ->
                     "zoom-out"
+
+                Exporting _ ->
+                    "alias"
 
         selectedId =
             case model.command of
@@ -342,28 +397,33 @@ viewArticleConnections model =
         |> List.concatMap (viewArticleConnection model)
 
 
-viewArticleConnection : Model -> (ArticleId,Linked Article) -> List (Svg Msg)
-viewArticleConnection model (linkedId,linkedArticle) =
+viewArticleConnection : Model -> ( ArticleId, Linked Article ) -> List (Svg Msg)
+viewArticleConnection model ( linkedId, linkedArticle ) =
     let
-        mdrag = 
+        mdrag =
             case model.command of
                 Dragging mdrag ->
                     mdrag
+
                 _ ->
                     Nothing
+
         selectedId =
             case mdrag of
                 Just d ->
                     d.id
+
                 Nothing ->
                     -1
+
         getPos id =
-            if id==selectedId then
+            if id == selectedId then
                 Maybe.map2 Drag.getRealPosition mdrag (Dict.get id model.articles)
             else
                 Maybe.map .pos (Dict.get id model.articles)
+
         linkedPos =
-            if linkedId==selectedId then
+            if linkedId == selectedId then
                 mdrag
                     |> Maybe.map (flip Drag.getRealPosition linkedArticle)
                     |> Maybe.withDefault linkedArticle.pos
@@ -397,7 +457,10 @@ drawLine p1 p2 =
 
 --Helper styles
 
-(=>) = (,)
+
+(=>) =
+    (,)
+
 
 noMargin =
     [ HAttr.style

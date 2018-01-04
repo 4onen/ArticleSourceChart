@@ -27,6 +27,9 @@ update msg model =
 updateModel : Msg -> Model -> Model
 updateModel msg model =
     case msg of
+        NameChange str ->
+            { model | name = str }
+
         SwitchTo tgt ->
             updateSwitchCommand tgt model
 
@@ -34,6 +37,10 @@ updateModel msg model =
             case model.command of
                 Add Nothing ->
                     updateAddArticle pt model
+
+                --Cancel export
+                Exporting m ->
+                    { model | command = m.previousCommand }
 
                 --WTF How?!
                 Add _ ->
@@ -51,21 +58,21 @@ updateModel msg model =
                 Add (Just id) ->
                     { model
                         | articles =
-                            model.articles
-                                |> Dict.update id
-                                    (Maybe.map
-                                        (\old ->
-                                            case field of
-                                                Headline content ->
-                                                    { old | headline = content }
+                            Dict.update id
+                                (Maybe.map
+                                    (\old ->
+                                        case field of
+                                            Headline content ->
+                                                { old | headline = content }
 
-                                                Author content ->
-                                                    { old | author = content }
+                                            Author content ->
+                                                { old | author = content }
 
-                                                Link content ->
-                                                    { old | link = content }
-                                        )
+                                            Link content ->
+                                                { old | link = content }
                                     )
+                                )
+                                model.articles
                     }
 
                 _ ->
@@ -103,6 +110,9 @@ updateSwitchCommand tgt model =
         ToUnlinking ->
             { model | command = Unlinking (Nothing) }
 
+        ToExporting ->
+            { model | command = Exporting <| ExportModel (model.command) Nothing }
+
 
 {-| Pass an article selection to its respective handling command,
 depending on the currently active command.
@@ -130,6 +140,10 @@ updateSelect id pt model =
 
         Unlinking (Just id1) ->
             updateUnlinkArticle id1 id model
+
+        --Cancel exporting
+        Exporting m ->
+            { model | command = m.previousCommand }
 
         --WTF How?!
         Add _ ->
