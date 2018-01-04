@@ -88,11 +88,13 @@ viewExportBox model m =
                         , Html.Attributes.style 
                             [ "background-color" => "lightBlue"
                             , "border" => "0.5em outset lightCyan"
+                            , "border-radius" => "1em"
                             , "font-size" => "1em"
                             , "user-select" => "text"
                             ]
                         ] []
                     ]
+                , Html.hr [] []
                 , Html.div []
                     [ Html.a 
                         [ Html.Attributes.href dataString
@@ -105,6 +107,19 @@ viewExportBox model m =
                             [ Html.text "(You'll have to open the file and copy the contents to re-import it.)" ]
                         ]
                     ]
+                , Html.hr [] []
+                , Html.button
+                    [ Html.Attributes.style
+                        [ "width" => "8em"
+                        , "height" => "5em"
+                        , "background-color" => "lightBlue"
+                        , "border" => "0.5em outset lightCyan"
+                        , "border-radius" => "1em"
+                        , "font-size" => "100%"
+                        ]
+                    , Html.Events.onClick <| Select 0 {x=0,y=0}
+                    ]
+                    [ Html.text "<= Return" ]
                 ]
             ]
 

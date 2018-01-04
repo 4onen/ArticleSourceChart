@@ -9886,11 +9886,15 @@ var _user$project$Export$viewExportBox = F2(
 																			_0: A2(_user$project$Export_ops['=>'], 'border', '0.5em outset lightCyan'),
 																			_1: {
 																				ctor: '::',
-																				_0: A2(_user$project$Export_ops['=>'], 'font-size', '1em'),
+																				_0: A2(_user$project$Export_ops['=>'], 'border-radius', '1em'),
 																				_1: {
 																					ctor: '::',
-																					_0: A2(_user$project$Export_ops['=>'], 'user-select', 'text'),
-																					_1: {ctor: '[]'}
+																					_0: A2(_user$project$Export_ops['=>'], 'font-size', '1em'),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(_user$project$Export_ops['=>'], 'user-select', 'text'),
+																						_1: {ctor: '[]'}
+																					}
 																				}
 																			}
 																		}
@@ -9909,54 +9913,116 @@ var _user$project$Export$viewExportBox = F2(
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$div,
+								_elm_lang$html$Html$hr,
 								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$a,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$href(dataString),
-											_1: {
+								{ctor: '[]'}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$a,
+											{
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$download(true),
+												_0: _elm_lang$html$Html_Attributes$href(dataString),
 												_1: {
 													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$downloadAs(
-														A2(_elm_lang$core$Basics_ops['++'], model.name, '.json')),
+													_0: _elm_lang$html$Html_Attributes$download(true),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$downloadAs(
+															A2(_elm_lang$core$Basics_ops['++'], model.name, '.json')),
+														_1: {ctor: '[]'}
+													}
+												}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Or download as a file!'),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$p,
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$style(
+																{
+																	ctor: '::',
+																	_0: A2(_user$project$Export_ops['=>'], 'color', 'red'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('(You\'ll have to open the file and copy the contents to re-import it.)'),
+															_1: {ctor: '[]'}
+														}),
 													_1: {ctor: '[]'}
 												}
-											}
-										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('Or download as a file!'),
-											_1: {
+											}),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$hr,
+										{ctor: '[]'},
+										{ctor: '[]'}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$button,
+											{
 												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$p,
+												_0: _elm_lang$html$Html_Attributes$style(
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$style(
-															{
+														_0: A2(_user$project$Export_ops['=>'], 'width', '8em'),
+														_1: {
+															ctor: '::',
+															_0: A2(_user$project$Export_ops['=>'], 'height', '5em'),
+															_1: {
 																ctor: '::',
-																_0: A2(_user$project$Export_ops['=>'], 'color', 'red'),
-																_1: {ctor: '[]'}
-															}),
-														_1: {ctor: '[]'}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text('(You\'ll have to open the file and copy the contents to re-import it.)'),
-														_1: {ctor: '[]'}
+																_0: A2(_user$project$Export_ops['=>'], 'background-color', 'lightBlue'),
+																_1: {
+																	ctor: '::',
+																	_0: A2(_user$project$Export_ops['=>'], 'border', '0.5em outset lightCyan'),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(_user$project$Export_ops['=>'], 'border-radius', '1em'),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(_user$project$Export_ops['=>'], 'font-size', '100%'),
+																			_1: {ctor: '[]'}
+																		}
+																	}
+																}
+															}
+														}
 													}),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Events$onClick(
+														A2(
+															_user$project$Msg$Select,
+															0,
+															{x: 0, y: 0})),
+													_1: {ctor: '[]'}
+												}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('<= Return'),
 												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
 						}
 					}),
 				_1: {ctor: '[]'}
