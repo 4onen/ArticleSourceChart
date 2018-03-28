@@ -9933,11 +9933,13 @@ var _user$project$GDrive$update = F2(
 var _user$project$GDrive$NOT_LOADED = {ctor: 'NOT_LOADED'};
 var _user$project$GDrive$init = _user$project$GDrive$NOT_LOADED;
 
-var _user$project$Model$Model = F3(
-	function (a, b, c) {
-		return {gapiLoaded: a, tabs: b, selectedTab: c};
+var _user$project$Model$Model = F5(
+	function (a, b, c, d, e) {
+		return {gapiLoaded: a, fileAPISupport: b, loadTabModel: c, tabs: d, selectedTab: e};
 	});
-var _user$project$Model$TEMPAddTab = {ctor: 'TEMPAddTab'};
+var _user$project$Model$LoadTabMsg = function (a) {
+	return {ctor: 'LoadTabMsg', _0: a};
+};
 var _user$project$Model$CloseTab = function (a) {
 	return {ctor: 'CloseTab', _0: a};
 };
@@ -9947,6 +9949,15 @@ var _user$project$Model$SwitchTab = function (a) {
 var _user$project$Model$GapiMsg = function (a) {
 	return {ctor: 'GapiMsg', _0: a};
 };
+var _user$project$Model$CopyPaste = function (a) {
+	return {ctor: 'CopyPaste', _0: a};
+};
+var _user$project$Model$Root = {ctor: 'Root'};
+var _user$project$Model$ButtonToRoot = {ctor: 'ButtonToRoot'};
+var _user$project$Model$ButtonDrive = {ctor: 'ButtonDrive'};
+var _user$project$Model$ButtonFileUpload = {ctor: 'ButtonFileUpload'};
+var _user$project$Model$ButtonCopyPaste = {ctor: 'ButtonCopyPaste'};
+var _user$project$Model$ButtonNew = {ctor: 'ButtonNew'};
 
 var _user$project$EditTab$viewLabel = F3(
 	function (selected, index, tab) {
@@ -10019,31 +10030,168 @@ var _user$project$LoadTab$viewLabel = function (selected) {
 			_1: {ctor: '[]'}
 		});
 };
+var _user$project$LoadTab$googleDriveButton = {
+	ctor: '::',
+	_0: A2(
+		_elm_lang$html$Html$button,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$classList(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'loadFileUploadButton', _1: true},
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$disabled(true),
+				_1: {ctor: '[]'}
+			}
+		},
+		{ctor: '[]'}),
+	_1: {
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('Google Drive'),
+		_1: {ctor: '[]'}
+	}
+};
+var _user$project$LoadTab$fileUploadButton = {
+	ctor: '::',
+	_0: A2(
+		_elm_lang$html$Html$button,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$classList(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'loadFileUploadButton', _1: true},
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$disabled(true),
+				_1: {ctor: '[]'}
+			}
+		},
+		{ctor: '[]'}),
+	_1: {
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('File upload'),
+		_1: {ctor: '[]'}
+	}
+};
+var _user$project$LoadTab$copyPasteButton = {
+	ctor: '::',
+	_0: A2(
+		_elm_lang$html$Html$button,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$classList(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'loadCopyPasteButton', _1: true},
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$Model$LoadTabMsg(_user$project$Model$ButtonCopyPaste)),
+				_1: {ctor: '[]'}
+			}
+		},
+		{ctor: '[]'}),
+	_1: {
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('Copy/Paste'),
+		_1: {ctor: '[]'}
+	}
+};
+var _user$project$LoadTab$newButton = {
+	ctor: '::',
+	_0: A2(
+		_elm_lang$html$Html$button,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$classList(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'loadNewButton', _1: true},
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$Model$LoadTabMsg(_user$project$Model$ButtonNew)),
+				_1: {ctor: '[]'}
+			}
+		},
+		{ctor: '[]'}),
+	_1: {
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('New'),
+		_1: {ctor: '[]'}
+	}
+};
 var _user$project$LoadTab$view = function (model) {
 	return A2(
-		_elm_lang$html$Html$div,
+		_elm_lang$html$Html$ul,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text('This is the file loading tab!'),
+			_0: A2(
+				_elm_lang$html$Html$li,
+				{ctor: '[]'},
+				_user$project$LoadTab$newButton),
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$button,
-					{
+					_elm_lang$html$Html$li,
+					{ctor: '[]'},
+					_user$project$LoadTab$copyPasteButton),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$li,
+						{ctor: '[]'},
+						_user$project$LoadTab$fileUploadButton),
+					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_user$project$Model$TEMPAddTab),
+						_0: A2(
+							_elm_lang$html$Html$li,
+							{ctor: '[]'},
+							_user$project$LoadTab$googleDriveButton),
 						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Add tab'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
+					}
+				}
 			}
 		});
 };
+var _user$project$LoadTab_ops = _user$project$LoadTab_ops || {};
+_user$project$LoadTab_ops['=>'] = F2(
+	function (v0, v1) {
+		return {ctor: '_Tuple2', _0: v0, _1: v1};
+	});
+var _user$project$LoadTab$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$LoadTab$init = _user$project$Model$Root;
 
 var _user$project$Main$subscriptions = function (model) {
 	return A2(
@@ -10168,29 +10316,23 @@ var _user$project$Main$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
+				var _p4 = A2(_user$project$LoadTab$update, _p1._0, model);
+				var newModel = _p4._0;
+				var cmd = _p4._1;
 				return {
 					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							tabs: A2(
-								_elm_lang$core$List$append,
-								model.tabs,
-								{
-									ctor: '::',
-									_0: {ctor: '_Tuple0'},
-									_1: {ctor: '[]'}
-								})
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_0: newModel,
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Model$LoadTabMsg, cmd)
 				};
 		}
 	});
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: A3(
+	_0: A5(
 		_user$project$Model$Model,
 		_user$project$GDrive$init,
+		_elm_lang$core$Maybe$Just(false),
+		_user$project$LoadTab$init,
 		{ctor: '[]'},
 		-1),
 	_1: _elm_lang$core$Platform_Cmd$none

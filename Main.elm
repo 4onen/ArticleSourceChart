@@ -22,7 +22,7 @@ main = Html.program
 
 init : (Model, Cmd Msg)
 init = 
-    ( Model (GDrive.init) [] -1
+    ( Model (GDrive.init) (Just False) (LoadTab.init) [] -1
     , Cmd.none
     )
 
@@ -41,8 +41,11 @@ update message model =
                 ({model | selectedTab = -1, tabs = List.Extra.removeAt index model.tabs}, Cmd.none)
             else
                 ({model | tabs = List.Extra.removeAt index model.tabs}, Cmd.none)
-        TEMPAddTab ->
-            ({model | tabs = List.append model.tabs [()]}, Cmd.none)
+        LoadTabMsg msg ->
+            let
+                (newModel, cmd) = LoadTab.update msg model
+            in
+                (newModel, Cmd.map LoadTabMsg cmd)
 
 
 view : Model -> Html Msg
