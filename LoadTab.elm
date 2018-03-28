@@ -12,7 +12,11 @@ init = Model.Root
 
 update : LoadTabMsg -> Model -> (Model, Cmd LoadTabMsg)
 update msg model =
-    (model, Cmd.none)
+    case msg of
+        ButtonNew ->
+            ({model | tabs = (::) () model.tabs}, Cmd.none)
+        _ ->
+            (model, Cmd.none)
 
 
 
@@ -26,7 +30,7 @@ view model =
         [ Html.li [] (newButton)
         , Html.li [] (copyPasteButton)
         , Html.li [] (fileUploadButton)
-        , Html.li [] (googleDriveButton)
+        , Html.li [] (gDriveButton)
         ]
 
 newButton : List (Html Msg)
@@ -65,12 +69,12 @@ fileUploadButton =
     , Html.text "File upload"
     ]
 
-googleDriveButton : List (Html Msg)
-googleDriveButton =
+gDriveButton : List (Html Msg)
+gDriveButton =
     [ Html.button
         [ Html.Attributes.classList
             [ ("loadButton",True)
-            , ("loadFileUploadButton",True)
+            , ("loadGDriveButton",True)
             ]
         , Html.Attributes.disabled True
         ] []

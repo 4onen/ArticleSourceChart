@@ -1,0 +1,56 @@
+ul {
+    list-style-type: none;
+}
+
+.loadButton {
+    display: inline-block;
+    height: 5em;
+    width: 8em;
+    background: lightblue;
+    border-radius: 1em;
+    border: 0.5em outset lightcyan;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-blend-mode: soft-light;
+}
+
+.loadNewButton {
+    background-image: url(imgs/new.svg);
+}
+
+.loadCopyPasteButton {
+    background-image: url(imgs/copy.svg);
+}
+
+.loadFileUploadButton {
+    background-image: url(imgs/upload.svg);
+}
+
+.loadGDriveButton {
+    background-image: url(imgs/gdrive.svg);
+}
+
+.loadGDriveSignInButton {
+    background: blue;
+    border: 0.5em none blue;
+}
+
+.loadButton:hover {
+    background-color: lightcyan;
+}
+
+.loadButton:hover:active {
+    background-color: lightskyblue;
+    border-color: lightskyblue;
+    border-style: inset;
+}
+
+.loadButton:disabled {
+    background-color: lightslategray;
+    border-color: lightslategray;
+}
+
+.loadButton:disabled:hover {
+    background-color: lightslategray;
+    border-color: lightslategray;
+}

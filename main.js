@@ -10030,7 +10030,7 @@ var _user$project$LoadTab$viewLabel = function (selected) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$LoadTab$googleDriveButton = {
+var _user$project$LoadTab$gDriveButton = {
 	ctor: '::',
 	_0: A2(
 		_elm_lang$html$Html$button,
@@ -10042,7 +10042,7 @@ var _user$project$LoadTab$googleDriveButton = {
 					_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'loadFileUploadButton', _1: true},
+						_0: {ctor: '_Tuple2', _0: 'loadGDriveButton', _1: true},
 						_1: {ctor: '[]'}
 					}
 				}),
@@ -10175,7 +10175,7 @@ var _user$project$LoadTab$view = function (model) {
 						_0: A2(
 							_elm_lang$html$Html$li,
 							{ctor: '[]'},
-							_user$project$LoadTab$googleDriveButton),
+							_user$project$LoadTab$gDriveButton),
 						_1: {ctor: '[]'}
 					}
 				}
@@ -10189,7 +10189,26 @@ _user$project$LoadTab_ops['=>'] = F2(
 	});
 var _user$project$LoadTab$update = F2(
 	function (msg, model) {
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		var _p0 = msg;
+		if (_p0.ctor === 'ButtonNew') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						tabs: A2(
+							F2(
+								function (x, y) {
+									return {ctor: '::', _0: x, _1: y};
+								}),
+							{ctor: '_Tuple0'},
+							model.tabs)
+					}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
 	});
 var _user$project$LoadTab$init = _user$project$Model$Root;
 
@@ -10209,33 +10228,26 @@ var _user$project$Main$viewTab = function (model) {
 };
 var _user$project$Main$viewTabRow = function (model) {
 	return A2(
-		_elm_lang$html$Html$table,
+		_elm_lang$html$Html$nav,
 		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$tr,
-				{ctor: '[]'},
-				A2(
-					F2(
-						function (x, y) {
-							return {ctor: '::', _0: x, _1: y};
-						}),
-					_user$project$LoadTab$viewLabel(
-						_elm_lang$core$Native_Utils.eq(-1, model.selectedTab)),
-					A2(
-						_elm_lang$core$List$indexedMap,
-						F2(
-							function (n, p) {
-								return A3(
-									_user$project$EditTab$viewLabel,
-									_elm_lang$core$Native_Utils.eq(n, model.selectedTab),
-									n,
-									p);
-							}),
-						model.tabs))),
-			_1: {ctor: '[]'}
-		});
+		A2(
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			_user$project$LoadTab$viewLabel(
+				_elm_lang$core$Native_Utils.eq(-1, model.selectedTab)),
+			A2(
+				_elm_lang$core$List$indexedMap,
+				F2(
+					function (n, p) {
+						return A3(
+							_user$project$EditTab$viewLabel,
+							_elm_lang$core$Native_Utils.eq(n, model.selectedTab),
+							n,
+							p);
+					}),
+				model.tabs)));
 };
 var _user$project$Main$view = function (model) {
 	return A2(
@@ -10257,15 +10269,8 @@ var _user$project$Main$view = function (model) {
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$map,
-						_user$project$Model$GapiMsg,
-						_user$project$GDrive$view(model)),
-					_1: {
-						ctor: '::',
-						_0: _user$project$Main$viewTabRow(model),
-						_1: {ctor: '[]'}
-					}
+					_0: _user$project$Main$viewTabRow(model),
+					_1: {ctor: '[]'}
 				}),
 			_1: {
 				ctor: '::',

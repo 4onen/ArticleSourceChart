@@ -51,19 +51,17 @@ update message model =
 view : Model -> Html Msg
 view model = 
     Html.div [Html.Attributes.style [("width","100%")]] 
-        [ Html.div [] [(Html.map GapiMsg (GDrive.view model)), viewTabRow model]
+        [ Html.div [] [viewTabRow model]
         , viewTab model
         ]
     
 viewTabRow : Model -> Html Msg
 viewTabRow model =
-    Html.table [] 
-        [ Html.tr [] 
-            ( model.tabs
-                |> List.indexedMap (\n p -> EditTab.viewLabel (n==model.selectedTab) n p)
-                |> (::) (LoadTab.viewLabel (-1==model.selectedTab))
-            )
-        ]
+    Html.nav [] 
+        ( model.tabs
+            |> List.indexedMap (\n p -> EditTab.viewLabel (n==model.selectedTab) n p)
+            |> (::) (LoadTab.viewLabel (-1==model.selectedTab))
+        )
 
 viewTab : Model -> Html Msg
 viewTab model =
