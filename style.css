@@ -1,9 +1,66 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+#ElmApp {
+    width: 100%;
+    height: 100%;
+}
+
+/* Tab row */
+nav {
+    margin: 0;
+    padding: 0.1em 0.1em 0 0.1em;
+    border-bottom: 0.1em solid black;
+}
+
+nav button {
+    display: inline-block;
+    height: 4em;
+    background-color: lightblue;
+    border-color: lightblue;
+    border-bottom-color: inset;
+    border-radius: 10% 10% 0 0;
+}
+
+nav button:disabled {
+    background-color: white;
+}
+
+nav button button {
+    height: 1em;
+    border: none;
+    border-radius: 1em;
+}
+
+nav button button:hover {
+    background-color: aliceblue;
+    font-weight: bold;
+}
+
+nav button:disabled button {
+    background-color: white;
+}
+
+nav button:disabled button:hover {
+    background-color: lightblue;
+}
+/* Tab row end */
+
+
+
+
+/* File page */
 ul {
     list-style-type: none;
 }
 
 .loadButton {
-    display: inline-block;
     height: 5em;
     width: 8em;
     background: lightblue;
@@ -54,3 +111,31 @@ ul {
     background-color: lightslategray;
     border-color: lightslategray;
 }
+/* File page end */
+
+/* Edit page */
+.ArticleDrawBox {
+    position: absolute;
+    height: 8em;
+    width: 8em;
+    overflow: hidden;
+    border: 1px solid black;
+    border-radius: 0.2em;
+}
+/* Tool row */
+#ToolbarToolDiv {
+    font-size: 200%
+}
+
+#ToolbarToolDiv *{
+    padding: 0.4em;
+}
+
+#ToolbarToolDiv button {
+    background-color: white;
+}
+
+#ToolbarToolDiv button:disabled {
+    background-color: wheat;
+}
+/* Tool row end */

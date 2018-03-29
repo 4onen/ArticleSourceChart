@@ -13,12 +13,13 @@
 
             var CLIENT_ID = "76504421127-vsvnp127mbr6e0bp2o4d41is58ohcbpc.apps.googleusercontent.com";
             var API_KEY = '';
+            var oauthToken;
 
             var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
 
             var SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
-            function handleClientLoad() {
+            function ongapiLoad() {
                 app.ports.gapiloaded.send(true)
                 gapi.load('client:auth2', initClient);
             }
@@ -35,16 +36,20 @@
                     // Handle the initial sign-in state.
                     app.ports.updateSigninStatus.send(gapi.auth2.getAuthInstance().isSignedIn.get());
 
-                    app.ports.signinStatusClick.subscribe(function(intoAcc){
+                    app.ports.signinStatusClick.subscribe(function(authResult){
+                        console.log(authResult);
                         //intoAcc signs in if true, out if false.
-                        if(intoAcc){gapi.auth2.getAuthInstance().signIn();}
-                        else{gapi.auth2.getAuthInstance().signOut();}
+                        if(authResult && !authResult.error) {
+                            gapi.auth2.getAuthInstance().signIn();
+                        }else{
+                            gapi.auth2.getAuthInstance().signOut();
+                        }
                     })
                 });
             }
         </script>
         <script type="text/javascript" src="https://apis.google.com/js/api.js" 
-            onload="this.onload=function(){};handleClientLoad();" 
+            onload="this.onload=function(){};ongapiLoad();" 
             onreadystatechange="if (this.readyState === 'complete') this.onload()">
         </script>
     </body>

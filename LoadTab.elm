@@ -4,17 +4,16 @@ import Html exposing (Html)
 import Html.Attributes
 import Html.Events
 
-import Model exposing (Model, Msg(..), LoadTabMsg(..), LoadTabModel)
+import Model exposing (Model, Msg(..))
+import LoadTabModel
 
-init : Model.LoadTabModel
-init = Model.Root
+init : LoadTabModel.Model
+init = LoadTabModel.Root
 
 
-update : LoadTabMsg -> Model -> (Model, Cmd LoadTabMsg)
+update : LoadTabModel.Msg -> Model -> (Model, Cmd LoadTabModel.Msg)
 update msg model =
     case msg of
-        ButtonNew ->
-            ({model | tabs = (::) () model.tabs}, Cmd.none)
         _ ->
             (model, Cmd.none)
 
@@ -40,7 +39,7 @@ newButton =
             [ ("loadButton",True)
             , ("loadNewButton",True)
             ]
-        , Html.Events.onClick (Model.LoadTabMsg ButtonNew)
+        , Html.Events.onClick (Model.LoadTabMsg LoadTabModel.ButtonNew)
         ] []
     , Html.text "New"
     ]
@@ -52,7 +51,7 @@ copyPasteButton =
             [ ("loadButton",True)
             , ("loadCopyPasteButton",True)
             ]
-        , Html.Events.onClick (Model.LoadTabMsg ButtonCopyPaste)
+        , Html.Events.onClick (Model.LoadTabMsg LoadTabModel.ButtonCopyPaste)
         ] []
     , Html.text "Copy/Paste"
     ]
@@ -91,4 +90,4 @@ viewLabel selected =
             else
                 Html.Events.onClick (SwitchTab -1)
     in
-        Html.button [action] [Html.text "File"]
+        Html.button [action] [Html.text "File Menu"]
