@@ -7,35 +7,48 @@ import GDrivePorts
 
 type Msg 
     = GapiLoaded Bool
+    | PickerLoaded Bool
     | UpdateSigninStatus Bool
     | SigninStatusClick Bool 
+    | OpenPicker
 
 type GapiStatus = NOT_LOADED | SIGNED_OUT | SIGNED_IN
 
 type alias GapiSession a =
-    { a | gapiLoaded : GapiStatus }
-
-init : GapiStatus
-init = NOT_LOADED
+    { a | 
+        gapiLoaded : GapiStatus,
+        pickerLoaded : GapiStatus
+    }
 
 update : Msg -> GapiSession a -> (GapiSession a, Cmd Msg)
 update message model =
     case message of
         GapiLoaded _ ->
-            (updateGapiStatus SIGNED_OUT model, Cmd.none)
+            ({model | gapiLoaded = SIGNED_OUT}, Cmd.none)
+        PickerLoaded _ ->
+            ({model | pickerLoaded = SIGNED_OUT}, Cmd.none)
         UpdateSigninStatus bool ->
-            ( case bool of
-                True ->
-                    (updateGapiStatus SIGNED_IN model, Cmd.none)
-                False ->
-                    (updateGapiStatus SIGNED_OUT model, Cmd.none)
-            )
+            let
+                newStatus = if bool then SIGNED_IN else SIGNED_OUT
+            in
+                ({model | 
+                    gapiLoaded =
+                        case model.gapiLoaded of 
+                            NOT_LOADED ->
+                                NOT_LOADED
+                            _ -> 
+                                newStatus
+                    , pickerLoaded =
+                        case model.pickerLoaded of
+                            NOT_LOADED ->
+                                NOT_LOADED
+                            _ ->
+                                newStatus
+                    }, Cmd.none)
         SigninStatusClick bool ->
             (model, GDrivePorts.signinStatusClick bool)
-
-updateGapiStatus : GapiStatus -> GapiSession a -> GapiSession a
-updateGapiStatus newStat model =
-    {model | gapiLoaded = newStat}
+        OpenPicker ->
+            (model, GDrivePorts.openPicker ())
 
 view : GapiSession a -> Html Msg
 view model = 
@@ -53,8 +66,18 @@ view model =
 
 subscriptions : GapiSession a -> Sub Msg
 subscriptions model =
-    case model.gapiLoaded of
-        NOT_LOADED ->
-            GDrivePorts.gapiloaded GapiLoaded
-        _ ->
-            GDrivePorts.updateSigninStatus UpdateSigninStatus
+    let
+        authSub = 
+            case model.gapiLoaded of
+                NOT_LOADED ->
+                    GDrivePorts.gapiLoaded GapiLoaded
+                _ ->
+                    GDrivePorts.updateSigninStatus UpdateSigninStatus
+        pickerSub = 
+            case model.pickerLoaded of
+                NOT_LOADED ->
+                    GDrivePorts.gapiPickerLoaded PickerLoaded
+                _ ->
+                    Sub.none
+    in
+        Sub.batch [authSub,pickerSub]

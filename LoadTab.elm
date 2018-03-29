@@ -6,6 +6,7 @@ import Html.Events
 
 import Model exposing (Model, Msg(..))
 import LoadTabModel
+import GDrive
 
 init : LoadTabModel.Model
 init = LoadTabModel.Root
@@ -29,7 +30,7 @@ view model =
         [ Html.li [] (newButton)
         , Html.li [] (copyPasteButton)
         , Html.li [] (fileUploadButton)
-        , Html.li [] (gDriveButton)
+        , Html.li [] (gDriveButton model.gapiLoaded model.pickerLoaded)
         ]
 
 newButton : List (Html Msg)
@@ -68,17 +69,41 @@ fileUploadButton =
     , Html.text "File upload"
     ]
 
-gDriveButton : List (Html Msg)
-gDriveButton =
-    [ Html.button
-        [ Html.Attributes.classList
-            [ ("loadButton",True)
-            , ("loadGDriveButton",True)
-            ]
-        , Html.Attributes.disabled True
-        ] []
-    , Html.text "Google Drive"
-    ]
+gDriveButton : GDrive.GapiStatus -> GDrive.GapiStatus -> List (Html Msg)
+gDriveButton gapiLoaded pickerLoaded =
+    let 
+        extraAttribute =
+            case (gapiLoaded,pickerLoaded) of 
+                (GDrive.NOT_LOADED,_) ->
+                    Html.Attributes.disabled True
+                (GDrive.SIGNED_OUT,_) ->
+                    Html.Events.onClick 
+                        (GapiMsg (GDrive.SigninStatusClick True))
+                (GDrive.SIGNED_IN,GDrive.NOT_LOADED) ->
+                    Html.Attributes.disabled True
+                (GDrive.SIGNED_IN,_) ->
+                    Html.Events.onClick
+                        (GapiMsg GDrive.OpenPicker)
+        label =
+            case (gapiLoaded,pickerLoaded) of
+                (GDrive.NOT_LOADED,_) ->
+                    "Google Drive support loading..."
+                (GDrive.SIGNED_OUT,_) ->
+                    "Sign in with Google Drive"
+                (GDrive.SIGNED_IN,GDrive.NOT_LOADED) ->
+                    "Google Drive picker missing. Huh."
+                (GDrive.SIGNED_IN,_) ->
+                    "Open from Google Drive"
+    in
+        [ Html.button
+            [ Html.Attributes.classList
+                [ ("loadButton",True)
+                , ("loadGDriveButton",True)
+                ]
+            , extraAttribute
+            ] []
+        , Html.text label
+        ]
 
 
 viewLabel : Bool -> Html Msg

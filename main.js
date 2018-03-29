@@ -12146,20 +12146,21 @@ var _user$project$EditTabLocalView$localView = function (model) {
 	}
 };
 
-var _user$project$GDrivePorts$gapiloaded = _elm_lang$core$Native_Platform.incomingPort('gapiloaded', _elm_lang$core$Json_Decode$bool);
+var _user$project$GDrivePorts$gapiLoaded = _elm_lang$core$Native_Platform.incomingPort('gapiLoaded', _elm_lang$core$Json_Decode$bool);
+var _user$project$GDrivePorts$gapiPickerLoaded = _elm_lang$core$Native_Platform.incomingPort('gapiPickerLoaded', _elm_lang$core$Json_Decode$bool);
 var _user$project$GDrivePorts$updateSigninStatus = _elm_lang$core$Native_Platform.incomingPort('updateSigninStatus', _elm_lang$core$Json_Decode$bool);
 var _user$project$GDrivePorts$signinStatusClick = _elm_lang$core$Native_Platform.outgoingPort(
 	'signinStatusClick',
 	function (v) {
 		return v;
 	});
-
-var _user$project$GDrive$updateGapiStatus = F2(
-	function (newStat, model) {
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{gapiLoaded: newStat});
+var _user$project$GDrivePorts$openPicker = _elm_lang$core$Native_Platform.outgoingPort(
+	'openPicker',
+	function (v) {
+		return null;
 	});
+
+var _user$project$GDrive$OpenPicker = {ctor: 'OpenPicker'};
 var _user$project$GDrive$SigninStatusClick = function (a) {
 	return {ctor: 'SigninStatusClick', _0: a};
 };
@@ -12201,54 +12202,104 @@ var _user$project$GDrive$view = function (model) {
 var _user$project$GDrive$UpdateSigninStatus = function (a) {
 	return {ctor: 'UpdateSigninStatus', _0: a};
 };
+var _user$project$GDrive$PickerLoaded = function (a) {
+	return {ctor: 'PickerLoaded', _0: a};
+};
 var _user$project$GDrive$GapiLoaded = function (a) {
 	return {ctor: 'GapiLoaded', _0: a};
 };
 var _user$project$GDrive$subscriptions = function (model) {
-	var _p1 = model.gapiLoaded;
-	if (_p1.ctor === 'NOT_LOADED') {
-		return _user$project$GDrivePorts$gapiloaded(_user$project$GDrive$GapiLoaded);
-	} else {
-		return _user$project$GDrivePorts$updateSigninStatus(_user$project$GDrive$UpdateSigninStatus);
-	}
+	var pickerSub = function () {
+		var _p1 = model.pickerLoaded;
+		if (_p1.ctor === 'NOT_LOADED') {
+			return _user$project$GDrivePorts$gapiPickerLoaded(_user$project$GDrive$PickerLoaded);
+		} else {
+			return _elm_lang$core$Platform_Sub$none;
+		}
+	}();
+	var authSub = function () {
+		var _p2 = model.gapiLoaded;
+		if (_p2.ctor === 'NOT_LOADED') {
+			return _user$project$GDrivePorts$gapiLoaded(_user$project$GDrive$GapiLoaded);
+		} else {
+			return _user$project$GDrivePorts$updateSigninStatus(_user$project$GDrive$UpdateSigninStatus);
+		}
+	}();
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: authSub,
+			_1: {
+				ctor: '::',
+				_0: pickerSub,
+				_1: {ctor: '[]'}
+			}
+		});
 };
 var _user$project$GDrive$SIGNED_IN = {ctor: 'SIGNED_IN'};
 var _user$project$GDrive$SIGNED_OUT = {ctor: 'SIGNED_OUT'};
+var _user$project$GDrive$NOT_LOADED = {ctor: 'NOT_LOADED'};
 var _user$project$GDrive$update = F2(
 	function (message, model) {
-		var _p2 = message;
-		switch (_p2.ctor) {
+		var _p3 = message;
+		switch (_p3.ctor) {
 			case 'GapiLoaded':
 				return {
 					ctor: '_Tuple2',
-					_0: A2(_user$project$GDrive$updateGapiStatus, _user$project$GDrive$SIGNED_OUT, model),
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{gapiLoaded: _user$project$GDrive$SIGNED_OUT}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'PickerLoaded':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{pickerLoaded: _user$project$GDrive$SIGNED_OUT}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'UpdateSigninStatus':
-				var _p3 = _p2._0;
-				if (_p3 === true) {
-					return {
-						ctor: '_Tuple2',
-						_0: A2(_user$project$GDrive$updateGapiStatus, _user$project$GDrive$SIGNED_IN, model),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: A2(_user$project$GDrive$updateGapiStatus, _user$project$GDrive$SIGNED_OUT, model),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				}
+				var newStatus = _p3._0 ? _user$project$GDrive$SIGNED_IN : _user$project$GDrive$SIGNED_OUT;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							gapiLoaded: function () {
+								var _p4 = model.gapiLoaded;
+								if (_p4.ctor === 'NOT_LOADED') {
+									return _user$project$GDrive$NOT_LOADED;
+								} else {
+									return newStatus;
+								}
+							}(),
+							pickerLoaded: function () {
+								var _p5 = model.pickerLoaded;
+								if (_p5.ctor === 'NOT_LOADED') {
+									return _user$project$GDrive$NOT_LOADED;
+								} else {
+									return newStatus;
+								}
+							}()
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SigninStatusClick':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$GDrivePorts$signinStatusClick(_p3._0)
+				};
 			default:
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$GDrivePorts$signinStatusClick(_p2._0)
+					_1: _user$project$GDrivePorts$openPicker(
+						{ctor: '_Tuple0'})
 				};
 		}
 	});
-var _user$project$GDrive$NOT_LOADED = {ctor: 'NOT_LOADED'};
-var _user$project$GDrive$init = _user$project$GDrive$NOT_LOADED;
 
 var _user$project$LoadTabModel$CopyPaste = function (a) {
 	return {ctor: 'CopyPaste', _0: a};
@@ -12260,9 +12311,9 @@ var _user$project$LoadTabModel$ButtonFileUpload = {ctor: 'ButtonFileUpload'};
 var _user$project$LoadTabModel$ButtonCopyPaste = {ctor: 'ButtonCopyPaste'};
 var _user$project$LoadTabModel$ButtonNew = {ctor: 'ButtonNew'};
 
-var _user$project$Model$Model = F5(
-	function (a, b, c, d, e) {
-		return {gapiLoaded: a, fileAPISupport: b, loadTabModel: c, tabs: d, selectedTab: e};
+var _user$project$Model$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {gapiLoaded: a, pickerLoaded: b, fileAPISupport: c, loadTabModel: d, tabs: e, selectedTab: f};
 	});
 var _user$project$Model$EditTabMsg = function (a) {
 	return {ctor: 'EditTabMsg', _0: a};
@@ -12443,35 +12494,71 @@ var _user$project$LoadTab$viewLabel = function (selected) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$LoadTab$gDriveButton = {
-	ctor: '::',
-	_0: A2(
-		_elm_lang$html$Html$button,
-		{
+var _user$project$LoadTab$gDriveButton = F2(
+	function (gapiLoaded, pickerLoaded) {
+		var label = function () {
+			var _p0 = {ctor: '_Tuple2', _0: gapiLoaded, _1: pickerLoaded};
+			switch (_p0._0.ctor) {
+				case 'NOT_LOADED':
+					return 'Google Drive support loading...';
+				case 'SIGNED_OUT':
+					return 'Sign in with Google Drive';
+				default:
+					if (_p0._1.ctor === 'NOT_LOADED') {
+						return 'Google Drive picker missing. Huh.';
+					} else {
+						return 'Open from Google Drive';
+					}
+			}
+		}();
+		var extraAttribute = function () {
+			var _p1 = {ctor: '_Tuple2', _0: gapiLoaded, _1: pickerLoaded};
+			switch (_p1._0.ctor) {
+				case 'NOT_LOADED':
+					return _elm_lang$html$Html_Attributes$disabled(true);
+				case 'SIGNED_OUT':
+					return _elm_lang$html$Html_Events$onClick(
+						_user$project$Model$GapiMsg(
+							_user$project$GDrive$SigninStatusClick(true)));
+				default:
+					if (_p1._1.ctor === 'NOT_LOADED') {
+						return _elm_lang$html$Html_Attributes$disabled(true);
+					} else {
+						return _elm_lang$html$Html_Events$onClick(
+							_user$project$Model$GapiMsg(_user$project$GDrive$OpenPicker));
+					}
+			}
+		}();
+		return {
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$classList(
+			_0: A2(
+				_elm_lang$html$Html$button,
 				{
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'loadGDriveButton', _1: true},
+								_1: {ctor: '[]'}
+							}
+						}),
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'loadGDriveButton', _1: true},
+						_0: extraAttribute,
 						_1: {ctor: '[]'}
 					}
-				}),
+				},
+				{ctor: '[]'}),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$disabled(true),
+				_0: _elm_lang$html$Html$text(label),
 				_1: {ctor: '[]'}
 			}
-		},
-		{ctor: '[]'}),
-	_1: {
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('Google Drive'),
-		_1: {ctor: '[]'}
-	}
-};
+		};
+	});
 var _user$project$LoadTab$fileUploadButton = {
 	ctor: '::',
 	_0: A2(
@@ -12588,7 +12675,7 @@ var _user$project$LoadTab$view = function (model) {
 						_0: A2(
 							_elm_lang$html$Html$li,
 							{ctor: '[]'},
-							_user$project$LoadTab$gDriveButton),
+							A2(_user$project$LoadTab$gDriveButton, model.gapiLoaded, model.pickerLoaded)),
 						_1: {ctor: '[]'}
 					}
 				}
@@ -12602,7 +12689,7 @@ _user$project$LoadTab_ops['=>'] = F2(
 	});
 var _user$project$LoadTab$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
+		var _p2 = msg;
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
 var _user$project$LoadTab$init = _user$project$LoadTabModel$Root;
@@ -12787,9 +12874,10 @@ var _user$project$Main$update = F2(
 	});
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: A5(
+	_0: A6(
 		_user$project$Model$Model,
-		_user$project$GDrive$init,
+		_user$project$GDrive$NOT_LOADED,
+		_user$project$GDrive$NOT_LOADED,
 		_elm_lang$core$Maybe$Just(false),
 		_user$project$LoadTab$init,
 		{ctor: '[]'},

@@ -2,7 +2,6 @@ module Main exposing (main)
 
 import Html exposing (Html)
 import Html.Attributes
-import Debug
 import List.Extra
 
 import GDrive
@@ -23,7 +22,13 @@ main = Html.program
 
 init : (Model, Cmd Msg)
 init = 
-    ( Model (GDrive.init) (Just False) (LoadTab.init) [] -1
+    ( Model 
+        GDrive.NOT_LOADED 
+        GDrive.NOT_LOADED 
+        (Just False) 
+        (LoadTab.init) 
+        [] 
+        -1
     , Cmd.none
     )
 
