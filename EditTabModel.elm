@@ -48,9 +48,7 @@ type Command
     | Exporting ExportModel
 
 type alias ExportModel =
-    { previousCommand : Command
-    , copyResult : Maybe Bool
-    }
+    { previousCommand : Command }
 
 type CommandSwitch
     = ToDrag

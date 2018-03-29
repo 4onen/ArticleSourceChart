@@ -10,6 +10,7 @@ import Set exposing (Set)
 
 import SpecialEvents exposing (onClickPoint, onClickNoPassthrough)
 import EditTabModel exposing (..)
+import Export
 import Point exposing (Point)
 import Drag exposing (Drag)
 import Linked exposing (Linked)
@@ -24,7 +25,8 @@ localView model =
 
                 _ ->
                     viewArticleTree model
-
+        Exporting m ->
+            Export.viewExportBox model m
         _ ->
             viewArticleTree model
 

@@ -88,13 +88,13 @@ updateSwitchCommand tgt model =
             { model | command = Delete }
 
         ToLinking ->
-            { model | command = Linking (Nothing) }
+            { model | command = Linking Nothing }
 
         ToUnlinking ->
-            { model | command = Unlinking (Nothing) }
+            { model | command = Unlinking Nothing }
 
         ToExporting ->
-            { model | command = Exporting <| ExportModel (model.command) Nothing }
+            { model | command = Exporting <| ExportModel (model.command) }
 
 {-| Pass an article selection to its respective handling command,
 depending on the currently active command.

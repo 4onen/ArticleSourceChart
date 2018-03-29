@@ -11017,10 +11017,9 @@ var _user$project$EditTabModel$Model = F4(
 	function (a, b, c, d) {
 		return {articles: a, command: b, nextId: c, chartName: d};
 	});
-var _user$project$EditTabModel$ExportModel = F2(
-	function (a, b) {
-		return {previousCommand: a, copyResult: b};
-	});
+var _user$project$EditTabModel$ExportModel = function (a) {
+	return {previousCommand: a};
+};
 var _user$project$EditTabModel$Link = function (a) {
 	return {ctor: 'Link', _0: a};
 };
@@ -11264,7 +11263,7 @@ var _user$project$EditTabLocalUpdate$updateSwitchCommand = F2(
 					model,
 					{
 						command: _user$project$EditTabModel$Exporting(
-							A2(_user$project$EditTabModel$ExportModel, model.command, _elm_lang$core$Maybe$Nothing))
+							_user$project$EditTabModel$ExportModel(model.command))
 					});
 		}
 	});
@@ -11398,6 +11397,277 @@ var _user$project$SpecialEvents$onMouseDownPoint = function (tagger) {
 		'mousedown',
 		A2(_elm_lang$core$Json_Decode$map, tagger, _user$project$SpecialEvents$targetClickPoint));
 };
+
+var _user$project$Export$encodeArticle = function (a) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'pos',
+				_1: _elm_lang$core$Json_Encode$object(
+					{
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'x',
+							_1: _elm_lang$core$Json_Encode$int(a.pos.x)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'y',
+								_1: _elm_lang$core$Json_Encode$int(a.pos.y)
+							},
+							_1: {ctor: '[]'}
+						}
+					})
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'headline',
+					_1: _elm_lang$core$Json_Encode$string(a.headline)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'author',
+						_1: _elm_lang$core$Json_Encode$string(a.author)
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'link',
+							_1: _elm_lang$core$Json_Encode$string(a.link)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'links',
+								_1: _elm_lang$core$Json_Encode$list(
+									A2(
+										_elm_lang$core$List$map,
+										_elm_lang$core$Json_Encode$int,
+										_elm_lang$core$Set$toList(a.links)))
+							},
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		});
+};
+var _user$project$Export$encode2Tuple = F3(
+	function (enc1, enc2, _p0) {
+		var _p1 = _p0;
+		return _elm_lang$core$Json_Encode$list(
+			{
+				ctor: '::',
+				_0: enc1(_p1._0),
+				_1: {
+					ctor: '::',
+					_0: enc2(_p1._1),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Export_ops = _user$project$Export_ops || {};
+_user$project$Export_ops['=>'] = F2(
+	function (v0, v1) {
+		return {ctor: '_Tuple2', _0: v0, _1: v1};
+	});
+var _user$project$Export$viewExportBox = F2(
+	function (model, m) {
+		var valueModel = _elm_lang$core$Json_Encode$object(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'articles',
+					_1: _elm_lang$core$Json_Encode$list(
+						A2(
+							_elm_lang$core$List$map,
+							A2(_user$project$Export$encode2Tuple, _elm_lang$core$Json_Encode$int, _user$project$Export$encodeArticle),
+							_elm_lang$core$Dict$toList(model.articles)))
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'name',
+						_1: _elm_lang$core$Json_Encode$string(model.chartName)
+					},
+					_1: {ctor: '[]'}
+				}
+			});
+		var modelString = A2(_elm_lang$core$Json_Encode$encode, 0, valueModel);
+		var dataString = A2(_elm_lang$core$Basics_ops['++'], 'data:application/json;charset=utf-8,', modelString);
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Copy to clipboard: '),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$input,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('text'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$id('copyFromBox'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$readonly(true),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$value(modelString),
+												_1: {
+													ctor: '::',
+													_0: A2(_elm_lang$html$Html_Attributes$attribute, 'onclick', '\n(function(){\n    var box = document.getElementById(\'copyFromBox\');\n    if(box){\n        box.focus();\n        box.select();\n        document.execCommand(\'copy\');\n        box.value=\"Copied!\";\n        box.onclick=null;\n        //let successMsg = document.createElement(\'p\');\n        //successMsg.style.background = \'lightGray\';\n        //successMsg.innerHtml = \"Copied!\";\n        //box.appendChild(successMsg);\n    }else{\n        console.error(\'onclick select and copy handler called without a copyFromBox in the webpage. How?!\');\n        document.body.appendChild(document.createElement(\'p\')).innerHtml = \'Somehow, clicking that button made everything break. Try the download link instead, mkay?\';\n    }\n})()\n                        '),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$style(
+															{
+																ctor: '::',
+																_0: A2(_user$project$Export_ops['=>'], 'background-color', 'lightBlue'),
+																_1: {
+																	ctor: '::',
+																	_0: A2(_user$project$Export_ops['=>'], 'border', '0.5em outset lightCyan'),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(_user$project$Export_ops['=>'], 'border-radius', '1em'),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(_user$project$Export_ops['=>'], 'font-size', '1em'),
+																			_1: {
+																				ctor: '::',
+																				_0: A2(_user$project$Export_ops['=>'], 'user-select', 'text'),
+																				_1: {ctor: '[]'}
+																			}
+																		}
+																	}
+																}
+															}),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								},
+								{ctor: '[]'}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$a,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$href(dataString),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$download(true),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$downloadAs(
+													A2(_elm_lang$core$Basics_ops['++'], model.chartName, '.json')),
+												_1: {ctor: '[]'}
+											}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Or download as a file!'),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$p,
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$style(
+														{
+															ctor: '::',
+															_0: A2(_user$project$Export_ops['=>'], 'color', 'red'),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('(You\'ll have to open the file and copy the contents to re-import it.)'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$button,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$style(
+												{
+													ctor: '::',
+													_0: A2(_user$project$Export_ops['=>'], 'width', '8em'),
+													_1: {
+														ctor: '::',
+														_0: A2(_user$project$Export_ops['=>'], 'height', '5em'),
+														_1: {
+															ctor: '::',
+															_0: A2(_user$project$Export_ops['=>'], 'background-color', 'lightBlue'),
+															_1: {
+																ctor: '::',
+																_0: A2(_user$project$Export_ops['=>'], 'border', '0.5em outset lightCyan'),
+																_1: {
+																	ctor: '::',
+																	_0: A2(_user$project$Export_ops['=>'], 'border-radius', '1em'),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(_user$project$Export_ops['=>'], 'font-size', '100%'),
+																		_1: {ctor: '[]'}
+																	}
+																}
+															}
+														}
+													}
+												}),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Events$onClick(
+													A2(
+														_user$project$EditTabModel$Select,
+														0,
+														{x: 0, y: 0})),
+												_1: {ctor: '[]'}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('<= Return'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			});
+	});
 
 var _user$project$EditTabLocalView$noSelect = {
 	ctor: '::',
@@ -12134,16 +12404,27 @@ var _user$project$EditTabLocalView$viewArticleTree = function (model) {
 };
 var _user$project$EditTabLocalView$localView = function (model) {
 	var _p13 = model.command;
-	if ((_p13.ctor === 'Add') && (_p13._0.ctor === 'Just')) {
-		var _p14 = A2(_elm_lang$core$Dict$get, _p13._0._0, model.articles);
-		if (_p14.ctor === 'Just') {
-			return _user$project$EditTabLocalView$viewArticle(_p14._0);
-		} else {
-			return _user$project$EditTabLocalView$viewArticleTree(model);
+	_v8_2:
+	do {
+		switch (_p13.ctor) {
+			case 'Add':
+				if (_p13._0.ctor === 'Just') {
+					var _p14 = A2(_elm_lang$core$Dict$get, _p13._0._0, model.articles);
+					if (_p14.ctor === 'Just') {
+						return _user$project$EditTabLocalView$viewArticle(_p14._0);
+					} else {
+						return _user$project$EditTabLocalView$viewArticleTree(model);
+					}
+				} else {
+					break _v8_2;
+				}
+			case 'Exporting':
+				return A2(_user$project$Export$viewExportBox, model, _p13._0);
+			default:
+				break _v8_2;
 		}
-	} else {
-		return _user$project$EditTabLocalView$viewArticleTree(model);
-	}
+	} while(false);
+	return _user$project$EditTabLocalView$viewArticleTree(model);
 };
 
 var _user$project$GDrivePorts$gapiLoaded = _elm_lang$core$Native_Platform.incomingPort('gapiLoaded', _elm_lang$core$Json_Decode$bool);
