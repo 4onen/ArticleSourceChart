@@ -25,7 +25,7 @@ init =
     ( Model 
         GDrive.NOT_LOADED 
         GDrive.NOT_LOADED 
-        (Just False) 
+        Nothing
         (LoadTab.init) 
         [] 
         -1
@@ -40,8 +40,10 @@ update message model =
                 (newModel, cmd) = GDrive.update msg model
             in
                 (newModel, Cmd.map GapiMsg cmd)
+                
         SwitchTab index ->
             {model | selectedTab = index} |> cmdNoneWrap
+
         CloseTab index ->
             if model.selectedTab == index then
                 {model | selectedTab = -1, tabs = List.Extra.removeAt index model.tabs} |> cmdNoneWrap
@@ -55,17 +57,13 @@ update message model =
                 )
             else
                 {model | tabs = List.Extra.removeAt index model.tabs} |> cmdNoneWrap
-        LoadTabMsg LoadTabModel.ButtonNew ->
-            { model 
-                | tabs = (::) EditTab.init model.tabs
-                , selectedTab = 0
-            } |> cmdNoneWrap
-            
+
         LoadTabMsg msg ->
             let
                 (newModel, cmd) = LoadTab.update msg model
             in
                 (newModel, Cmd.map LoadTabMsg cmd)
+
         EditTabMsg msg ->
             let
                 (newModel, cmd) = EditTab.update msg model

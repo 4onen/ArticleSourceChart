@@ -1,4 +1,4 @@
-module Export exposing (viewExportBox)
+module Export exposing (viewExportBox, jsonValue, jsonString)
 
 --Libs
 
@@ -19,28 +19,36 @@ import EditTabModel exposing (..)
 (=>) : a -> b -> (a,b)
 (=>) = (,)
 
+jsonValue : Model -> Json.Encode.Value
+jsonValue model =
+    Json.Encode.object
+        [   ( "articles"
+            , model.articles
+                |> Dict.toList
+                |> List.map (encode2Tuple Json.Encode.int encodeArticle)
+                |> Json.Encode.list
+            )
+        , ( "name", Json.Encode.string model.chartName)
+        ]
+
+jsonString : Model -> String
+jsonString model =
+    model
+        |> jsonValue
+        |> Json.Encode.encode 0
+
+
 viewExportBox : Model -> ExportModel -> Html Msg
 viewExportBox model m =
     let
-        valueModel =
-            Json.Encode.object
-                [ ( "articles"
-                  , model.articles
-                        |> Dict.toList
-                        |> List.map (encode2Tuple Json.Encode.int encodeArticle)
-                        |> Json.Encode.list
-                  )
-                , ( "name", Json.Encode.string model.chartName)
-                ]
-
         modelString =
-            Json.Encode.encode 0 valueModel
+            jsonString model
 
         dataString =
             "data:application/json;charset=utf-8," ++ modelString
     in
-        Html.div [] 
-            [ Html.div [] 
+        Html.ul [] 
+            [ Html.li [] 
                 [ Html.text "Copy to clipboard: "
                 , Html.input 
                     [ Html.Attributes.type_ "text"
@@ -75,17 +83,23 @@ viewExportBox model m =
                         , "user-select" => "text"
                         ]
                     ] []
-                , Html.a 
+                ]
+            , Html.li [] 
+                [ Html.a 
                     [ Html.Attributes.href dataString
                     , Html.Attributes.download True
                     , Html.Attributes.downloadAs (model.chartName++".json")
+                    , Html.Attributes.attribute "onload" 
+                        """
+(function(){
+    console.log('loaded!');
+})()
+                        """
                     ]
-                    [ Html.text "Or download as a file!"
-                    , Html.p
-                        [ Html.Attributes.style ["color"=>"red"] ]
-                        [ Html.text "(You'll have to open the file and copy the contents to re-import it.)" ]
-                    ]
-                , Html.button
+                    [ Html.text "Or download as a file!" ]
+                ]
+            , Html.li [] 
+                [ Html.button
                     [ Html.Attributes.style
                         [ "width" => "8em"
                         , "height" => "5em"

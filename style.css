@@ -12,6 +12,10 @@ html, body {
     height: 100%;
 }
 
+ul {
+    text-align: center;
+}
+
 /* Tab row */
 nav {
     margin: 0;
@@ -56,8 +60,21 @@ nav button:disabled button:hover {
 
 
 /* File page */
-ul {
-    list-style-type: none;
+#LoadTab {
+    margin: 0 auto;
+    max-width: 36em;
+}
+
+#LoadTab td {
+    vertical-align: middle;
+}
+
+#LoadTab p {
+    display: block;
+}
+
+#LoadTab textarea {
+    width: 20em;
 }
 
 .loadButton {
@@ -85,6 +102,10 @@ ul {
 
 .loadGDriveButton {
     background-image: url(imgs/gdrive.svg);
+}
+
+.loadBackButton {
+    background-image: url(imgs/back.svg);
 }
 
 .loadGDriveSignInButton {

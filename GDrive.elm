@@ -1,7 +1,8 @@
 module GDrive exposing (..)
 
-import Html exposing (Html)
+import Html exposing (Html, Attribute)
 import Html.Events
+import Html.Attributes
 
 import GDrivePorts
 
@@ -11,13 +12,16 @@ type Msg
     | UpdateSigninStatus Bool
     | SigninStatusClick Bool 
     | OpenPicker
+    | PickerFile String
+    | PickerError String
 
 type GapiStatus = NOT_LOADED | SIGNED_OUT | SIGNED_IN
 
 type alias GapiSession a =
     { a | 
         gapiLoaded : GapiStatus,
-        pickerLoaded : GapiStatus
+        pickerLoaded : GapiStatus,
+        pickerError : Maybe String
     }
 
 update : Msg -> GapiSession a -> (GapiSession a, Cmd Msg)
@@ -49,20 +53,30 @@ update message model =
             (model, GDrivePorts.signinStatusClick bool)
         OpenPicker ->
             (model, GDrivePorts.openPicker ())
+        PickerFile str ->
+            (model, Cmd.none)
+        PickerError str ->
+            ({model | pickerError = Just str}, Cmd.none)
 
-view : GapiSession a -> Html Msg
-view model = 
-    case model.gapiLoaded of
-        NOT_LOADED ->
-            Html.text "Google drive loading..."
-        SIGNED_OUT ->
-            Html.button 
-                [Html.Events.onClick (SigninStatusClick True)] 
-                [Html.text "Sign in"]
-        SIGNED_IN ->
-            Html.button 
-                [Html.Events.onClick (SigninStatusClick False)] 
-                [Html.text "Sign out"]
+viewButtonAttribute : GapiSession a -> Html.Attribute Msg
+viewButtonAttribute {gapiLoaded,pickerLoaded} =
+    case (gapiLoaded,pickerLoaded) of 
+        (NOT_LOADED,_) ->
+            Html.Attributes.disabled True
+        (SIGNED_OUT,_) ->
+            Html.Events.onClick (SigninStatusClick True)
+        (SIGNED_IN,NOT_LOADED) ->
+            Html.Attributes.disabled True
+        (SIGNED_IN,_) ->
+            Html.Events.onClick (OpenPicker)
+
+viewStatusText : GapiSession a -> String
+viewStatusText {gapiLoaded,pickerLoaded} =
+    case (gapiLoaded,pickerLoaded) of
+        (NOT_LOADED,_) -> "Loading Google Drive™..."
+        (SIGNED_OUT,_) -> "Sign in to Google Drive™"
+        (SIGNED_IN,NOT_LOADED) -> "Unspecified error loading Google Drive™ apis"
+        (SIGNED_IN,_) -> "Open file from Google Drive™"
 
 subscriptions : GapiSession a -> Sub Msg
 subscriptions model =
@@ -78,6 +92,9 @@ subscriptions model =
                 NOT_LOADED ->
                     GDrivePorts.gapiPickerLoaded PickerLoaded
                 _ ->
-                    Sub.none
+                    Sub.batch 
+                        [ GDrivePorts.pickerFile PickerFile
+                        , GDrivePorts.pickerError PickerError
+                        ]
     in
         Sub.batch [authSub,pickerSub]

@@ -11477,6 +11477,36 @@ var _user$project$Export$encode2Tuple = F3(
 				}
 			});
 	});
+var _user$project$Export$jsonValue = function (model) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'articles',
+				_1: _elm_lang$core$Json_Encode$list(
+					A2(
+						_elm_lang$core$List$map,
+						A2(_user$project$Export$encode2Tuple, _elm_lang$core$Json_Encode$int, _user$project$Export$encodeArticle),
+						_elm_lang$core$Dict$toList(model.articles)))
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'name',
+					_1: _elm_lang$core$Json_Encode$string(model.chartName)
+				},
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Export$jsonString = function (model) {
+	return A2(
+		_elm_lang$core$Json_Encode$encode,
+		0,
+		_user$project$Export$jsonValue(model));
+};
 var _user$project$Export_ops = _user$project$Export_ops || {};
 _user$project$Export_ops['=>'] = F2(
 	function (v0, v1) {
@@ -11484,37 +11514,15 @@ _user$project$Export_ops['=>'] = F2(
 	});
 var _user$project$Export$viewExportBox = F2(
 	function (model, m) {
-		var valueModel = _elm_lang$core$Json_Encode$object(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'articles',
-					_1: _elm_lang$core$Json_Encode$list(
-						A2(
-							_elm_lang$core$List$map,
-							A2(_user$project$Export$encode2Tuple, _elm_lang$core$Json_Encode$int, _user$project$Export$encodeArticle),
-							_elm_lang$core$Dict$toList(model.articles)))
-				},
-				_1: {
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'name',
-						_1: _elm_lang$core$Json_Encode$string(model.chartName)
-					},
-					_1: {ctor: '[]'}
-				}
-			});
-		var modelString = A2(_elm_lang$core$Json_Encode$encode, 0, valueModel);
+		var modelString = _user$project$Export$jsonString(model);
 		var dataString = A2(_elm_lang$core$Basics_ops['++'], 'data:application/json;charset=utf-8,', modelString);
 		return A2(
-			_elm_lang$html$Html$div,
+			_elm_lang$html$Html$ul,
 			{ctor: '[]'},
 			{
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$div,
+					_elm_lang$html$Html$li,
 					{ctor: '[]'},
 					{
 						ctor: '::',
@@ -11570,102 +11578,100 @@ var _user$project$Export$viewExportBox = F2(
 									}
 								},
 								{ctor: '[]'}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$a,
-									{
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$li,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$a,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$href(dataString),
+									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$href(dataString),
+										_0: _elm_lang$html$Html_Attributes$download(true),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$download(true),
+											_0: _elm_lang$html$Html_Attributes$downloadAs(
+												A2(_elm_lang$core$Basics_ops['++'], model.chartName, '.json')),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$downloadAs(
-													A2(_elm_lang$core$Basics_ops['++'], model.chartName, '.json')),
+												_0: A2(_elm_lang$html$Html_Attributes$attribute, 'onload', '\n(function(){\n    console.log(\'loaded!\');\n})()\n                        '),
 												_1: {ctor: '[]'}
 											}
 										}
-									},
+									}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Or download as a file!'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$li,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$button,
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Or download as a file!'),
-										_1: {
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$p,
-												{
+										_0: _elm_lang$html$Html_Attributes$style(
+											{
+												ctor: '::',
+												_0: A2(_user$project$Export_ops['=>'], 'width', '8em'),
+												_1: {
 													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$style(
-														{
-															ctor: '::',
-															_0: A2(_user$project$Export_ops['=>'], 'color', 'red'),
-															_1: {ctor: '[]'}
-														}),
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text('(You\'ll have to open the file and copy the contents to re-import it.)'),
-													_1: {ctor: '[]'}
-												}),
-											_1: {ctor: '[]'}
-										}
-									}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$button,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$style(
-												{
-													ctor: '::',
-													_0: A2(_user$project$Export_ops['=>'], 'width', '8em'),
+													_0: A2(_user$project$Export_ops['=>'], 'height', '5em'),
 													_1: {
 														ctor: '::',
-														_0: A2(_user$project$Export_ops['=>'], 'height', '5em'),
+														_0: A2(_user$project$Export_ops['=>'], 'background-color', 'lightBlue'),
 														_1: {
 															ctor: '::',
-															_0: A2(_user$project$Export_ops['=>'], 'background-color', 'lightBlue'),
+															_0: A2(_user$project$Export_ops['=>'], 'border', '0.5em outset lightCyan'),
 															_1: {
 																ctor: '::',
-																_0: A2(_user$project$Export_ops['=>'], 'border', '0.5em outset lightCyan'),
+																_0: A2(_user$project$Export_ops['=>'], 'border-radius', '1em'),
 																_1: {
 																	ctor: '::',
-																	_0: A2(_user$project$Export_ops['=>'], 'border-radius', '1em'),
-																	_1: {
-																		ctor: '::',
-																		_0: A2(_user$project$Export_ops['=>'], 'font-size', '100%'),
-																		_1: {ctor: '[]'}
-																	}
+																	_0: A2(_user$project$Export_ops['=>'], 'font-size', '100%'),
+																	_1: {ctor: '[]'}
 																}
 															}
 														}
 													}
-												}),
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$html$Html_Events$onClick(
-													A2(
-														_user$project$EditTabModel$Select,
-														0,
-														{x: 0, y: 0})),
-												_1: {ctor: '[]'}
-											}
-										},
-										{
+												}
+											}),
+										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('<= Return'),
+											_0: _elm_lang$html$Html_Events$onClick(
+												A2(
+													_user$project$EditTabModel$Select,
+													0,
+													{x: 0, y: 0})),
 											_1: {ctor: '[]'}
-										}),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('<= Return'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
 			});
 	});
 
@@ -12440,44 +12446,50 @@ var _user$project$GDrivePorts$openPicker = _elm_lang$core$Native_Platform.outgoi
 	function (v) {
 		return null;
 	});
+var _user$project$GDrivePorts$pickerFile = _elm_lang$core$Native_Platform.incomingPort('pickerFile', _elm_lang$core$Json_Decode$string);
+var _user$project$GDrivePorts$pickerError = _elm_lang$core$Native_Platform.incomingPort('pickerError', _elm_lang$core$Json_Decode$string);
 
+var _user$project$GDrive$viewStatusText = function (_p0) {
+	var _p1 = _p0;
+	var _p2 = {ctor: '_Tuple2', _0: _p1.gapiLoaded, _1: _p1.pickerLoaded};
+	switch (_p2._0.ctor) {
+		case 'NOT_LOADED':
+			return 'Loading Google Drive™...';
+		case 'SIGNED_OUT':
+			return 'Sign in to Google Drive™';
+		default:
+			if (_p2._1.ctor === 'NOT_LOADED') {
+				return 'Unspecified error loading Google Drive™ apis';
+			} else {
+				return 'Open file from Google Drive™';
+			}
+	}
+};
+var _user$project$GDrive$PickerError = function (a) {
+	return {ctor: 'PickerError', _0: a};
+};
+var _user$project$GDrive$PickerFile = function (a) {
+	return {ctor: 'PickerFile', _0: a};
+};
 var _user$project$GDrive$OpenPicker = {ctor: 'OpenPicker'};
 var _user$project$GDrive$SigninStatusClick = function (a) {
 	return {ctor: 'SigninStatusClick', _0: a};
 };
-var _user$project$GDrive$view = function (model) {
-	var _p0 = model.gapiLoaded;
-	switch (_p0.ctor) {
+var _user$project$GDrive$viewButtonAttribute = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = {ctor: '_Tuple2', _0: _p4.gapiLoaded, _1: _p4.pickerLoaded};
+	switch (_p5._0.ctor) {
 		case 'NOT_LOADED':
-			return _elm_lang$html$Html$text('Google drive loading...');
+			return _elm_lang$html$Html_Attributes$disabled(true);
 		case 'SIGNED_OUT':
-			return A2(
-				_elm_lang$html$Html$button,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(
-						_user$project$GDrive$SigninStatusClick(true)),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Sign in'),
-					_1: {ctor: '[]'}
-				});
+			return _elm_lang$html$Html_Events$onClick(
+				_user$project$GDrive$SigninStatusClick(true));
 		default:
-			return A2(
-				_elm_lang$html$Html$button,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(
-						_user$project$GDrive$SigninStatusClick(false)),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Sign out'),
-					_1: {ctor: '[]'}
-				});
+			if (_p5._1.ctor === 'NOT_LOADED') {
+				return _elm_lang$html$Html_Attributes$disabled(true);
+			} else {
+				return _elm_lang$html$Html_Events$onClick(_user$project$GDrive$OpenPicker);
+			}
 	}
 };
 var _user$project$GDrive$UpdateSigninStatus = function (a) {
@@ -12491,16 +12503,25 @@ var _user$project$GDrive$GapiLoaded = function (a) {
 };
 var _user$project$GDrive$subscriptions = function (model) {
 	var pickerSub = function () {
-		var _p1 = model.pickerLoaded;
-		if (_p1.ctor === 'NOT_LOADED') {
+		var _p6 = model.pickerLoaded;
+		if (_p6.ctor === 'NOT_LOADED') {
 			return _user$project$GDrivePorts$gapiPickerLoaded(_user$project$GDrive$PickerLoaded);
 		} else {
-			return _elm_lang$core$Platform_Sub$none;
+			return _elm_lang$core$Platform_Sub$batch(
+				{
+					ctor: '::',
+					_0: _user$project$GDrivePorts$pickerFile(_user$project$GDrive$PickerFile),
+					_1: {
+						ctor: '::',
+						_0: _user$project$GDrivePorts$pickerError(_user$project$GDrive$PickerError),
+						_1: {ctor: '[]'}
+					}
+				});
 		}
 	}();
 	var authSub = function () {
-		var _p2 = model.gapiLoaded;
-		if (_p2.ctor === 'NOT_LOADED') {
+		var _p7 = model.gapiLoaded;
+		if (_p7.ctor === 'NOT_LOADED') {
 			return _user$project$GDrivePorts$gapiLoaded(_user$project$GDrive$GapiLoaded);
 		} else {
 			return _user$project$GDrivePorts$updateSigninStatus(_user$project$GDrive$UpdateSigninStatus);
@@ -12522,8 +12543,8 @@ var _user$project$GDrive$SIGNED_OUT = {ctor: 'SIGNED_OUT'};
 var _user$project$GDrive$NOT_LOADED = {ctor: 'NOT_LOADED'};
 var _user$project$GDrive$update = F2(
 	function (message, model) {
-		var _p3 = message;
-		switch (_p3.ctor) {
+		var _p8 = message;
+		switch (_p8.ctor) {
 			case 'GapiLoaded':
 				return {
 					ctor: '_Tuple2',
@@ -12541,23 +12562,23 @@ var _user$project$GDrive$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'UpdateSigninStatus':
-				var newStatus = _p3._0 ? _user$project$GDrive$SIGNED_IN : _user$project$GDrive$SIGNED_OUT;
+				var newStatus = _p8._0 ? _user$project$GDrive$SIGNED_IN : _user$project$GDrive$SIGNED_OUT;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
 							gapiLoaded: function () {
-								var _p4 = model.gapiLoaded;
-								if (_p4.ctor === 'NOT_LOADED') {
+								var _p9 = model.gapiLoaded;
+								if (_p9.ctor === 'NOT_LOADED') {
 									return _user$project$GDrive$NOT_LOADED;
 								} else {
 									return newStatus;
 								}
 							}(),
 							pickerLoaded: function () {
-								var _p5 = model.pickerLoaded;
-								if (_p5.ctor === 'NOT_LOADED') {
+								var _p10 = model.pickerLoaded;
+								if (_p10.ctor === 'NOT_LOADED') {
 									return _user$project$GDrive$NOT_LOADED;
 								} else {
 									return newStatus;
@@ -12570,14 +12591,26 @@ var _user$project$GDrive$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$GDrivePorts$signinStatusClick(_p3._0)
+					_1: _user$project$GDrivePorts$signinStatusClick(_p8._0)
 				};
-			default:
+			case 'OpenPicker':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
 					_1: _user$project$GDrivePorts$openPicker(
 						{ctor: '_Tuple0'})
+				};
+			case 'PickerFile':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							pickerError: _elm_lang$core$Maybe$Just(_p8._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
 	});
@@ -12594,7 +12627,7 @@ var _user$project$LoadTabModel$ButtonNew = {ctor: 'ButtonNew'};
 
 var _user$project$Model$Model = F6(
 	function (a, b, c, d, e, f) {
-		return {gapiLoaded: a, pickerLoaded: b, fileAPISupport: c, loadTabModel: d, tabs: e, selectedTab: f};
+		return {gapiLoaded: a, pickerLoaded: b, pickerError: c, loadTabModel: d, tabs: e, selectedTab: f};
 	});
 var _user$project$Model$EditTabMsg = function (a) {
 	return {ctor: 'EditTabMsg', _0: a};
@@ -12759,6 +12792,10 @@ var _user$project$EditTab$init = {
 	chartName: ''
 };
 
+var _user$project$Import$importChart = function (str) {
+	return _user$project$EditTab$init;
+};
+
 var _user$project$LoadTab$viewLabel = function (selected) {
 	var action = selected ? _elm_lang$html$Html_Attributes$disabled(true) : _elm_lang$html$Html_Events$onClick(
 		_user$project$Model$SwitchTab(-1));
@@ -12775,71 +12812,121 @@ var _user$project$LoadTab$viewLabel = function (selected) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$LoadTab$gDriveButton = F2(
-	function (gapiLoaded, pickerLoaded) {
-		var label = function () {
-			var _p0 = {ctor: '_Tuple2', _0: gapiLoaded, _1: pickerLoaded};
-			switch (_p0._0.ctor) {
-				case 'NOT_LOADED':
-					return 'Google Drive support loading...';
-				case 'SIGNED_OUT':
-					return 'Sign in with Google Drive';
-				default:
-					if (_p0._1.ctor === 'NOT_LOADED') {
-						return 'Google Drive picker missing. Huh.';
-					} else {
-						return 'Open from Google Drive';
-					}
-			}
-		}();
-		var extraAttribute = function () {
-			var _p1 = {ctor: '_Tuple2', _0: gapiLoaded, _1: pickerLoaded};
-			switch (_p1._0.ctor) {
-				case 'NOT_LOADED':
-					return _elm_lang$html$Html_Attributes$disabled(true);
-				case 'SIGNED_OUT':
-					return _elm_lang$html$Html_Events$onClick(
-						_user$project$Model$GapiMsg(
-							_user$project$GDrive$SigninStatusClick(true)));
-				default:
-					if (_p1._1.ctor === 'NOT_LOADED') {
-						return _elm_lang$html$Html_Attributes$disabled(true);
-					} else {
-						return _elm_lang$html$Html_Events$onClick(
-							_user$project$Model$GapiMsg(_user$project$GDrive$OpenPicker));
-					}
-			}
-		}();
-		return {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$button,
-				{
+var _user$project$LoadTab$viewCopyPaste = function (str) {
+	return A2(
+		_elm_lang$html$Html$map,
+		_user$project$Model$LoadTabMsg,
+		A2(
+			_elm_lang$html$Html$form,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$id('LoadTab'),
+				_1: {
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$classList(
-						{
+					_0: _elm_lang$html$Html_Events$onSubmit(_user$project$LoadTabModel$ButtonCopyPaste),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _user$project$SpecialEvents$onClickNoDefault(_user$project$LoadTabModel$ButtonToRoot),
+						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'loadGDriveButton', _1: true},
-								_1: {ctor: '[]'}
-							}
-						}),
+							_0: _elm_lang$html$Html_Attributes$classList(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'loadBackButton', _1: true},
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {ctor: '[]'}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$textarea,
+						{ctor: '[]'},
+						{ctor: '[]'}),
 					_1: {
 						ctor: '::',
-						_0: extraAttribute,
+						_0: A2(
+							_elm_lang$html$Html$button,
+							{
+								ctor: '::',
+								_0: _user$project$SpecialEvents$onClickNoDefault(_user$project$LoadTabModel$ButtonCopyPaste),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$classList(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'loadCopyPasteButton', _1: true},
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {ctor: '[]'}
+								}
+							},
+							{ctor: '[]'}),
 						_1: {ctor: '[]'}
 					}
-				},
-				{ctor: '[]'}),
-			_1: {
+				}
+			}));
+};
+var _user$project$LoadTab$gDriveButton = function (model) {
+	var label = _user$project$GDrive$viewStatusText(model);
+	var extraAttribute = A2(
+		_elm_lang$html$Html_Attributes$map,
+		_user$project$Model$GapiMsg,
+		_user$project$GDrive$viewButtonAttribute(model));
+	return {
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$button,
+			{
 				ctor: '::',
-				_0: _elm_lang$html$Html$text(label),
-				_1: {ctor: '[]'}
-			}
-		};
-	});
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'loadGDriveButton', _1: true},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: extraAttribute,
+					_1: {ctor: '[]'}
+				}
+			},
+			{ctor: '[]'}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$p,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(label),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		}
+	};
+};
 var _user$project$LoadTab$fileUploadButton = {
 	ctor: '::',
 	_0: A2(
@@ -12865,103 +12952,145 @@ var _user$project$LoadTab$fileUploadButton = {
 		{ctor: '[]'}),
 	_1: {
 		ctor: '::',
-		_0: _elm_lang$html$Html$text('File upload'),
-		_1: {ctor: '[]'}
-	}
-};
-var _user$project$LoadTab$copyPasteButton = {
-	ctor: '::',
-	_0: A2(
-		_elm_lang$html$Html$button,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$classList(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'loadCopyPasteButton', _1: true},
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {
+		_0: A2(
+			_elm_lang$html$Html$p,
+			{ctor: '[]'},
+			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(
-					_user$project$Model$LoadTabMsg(_user$project$LoadTabModel$ButtonCopyPaste)),
+				_0: _elm_lang$html$Html$text('Web Platform file upload'),
 				_1: {ctor: '[]'}
-			}
-		},
-		{ctor: '[]'}),
-	_1: {
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('Copy/Paste'),
+			}),
 		_1: {ctor: '[]'}
 	}
 };
-var _user$project$LoadTab$newButton = {
-	ctor: '::',
-	_0: A2(
-		_elm_lang$html$Html$button,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$classList(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
-					_1: {
+var _user$project$LoadTab$copyPasteButton = A2(
+	_elm_lang$core$List$map,
+	_elm_lang$html$Html$map(_user$project$Model$LoadTabMsg),
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$button,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'loadNewButton', _1: true},
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(
-					_user$project$Model$LoadTabMsg(_user$project$LoadTabModel$ButtonNew)),
-				_1: {ctor: '[]'}
-			}
-		},
-		{ctor: '[]'}),
-	_1: {
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('New'),
-		_1: {ctor: '[]'}
-	}
-};
-var _user$project$LoadTab$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$li,
-				{ctor: '[]'},
-				_user$project$LoadTab$newButton),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$li,
-					{ctor: '[]'},
-					_user$project$LoadTab$copyPasteButton),
+						_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'loadCopyPasteButton', _1: true},
+							_1: {ctor: '[]'}
+						}
+					}),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$li,
-						{ctor: '[]'},
-						_user$project$LoadTab$fileUploadButton),
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$LoadTabModel$ButtonCopyPaste),
+					_1: {ctor: '[]'}
+				}
+			},
+			{ctor: '[]'}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$p,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Copy/Paste'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$LoadTab$newButton = A2(
+	_elm_lang$core$List$map,
+	_elm_lang$html$Html$map(_user$project$Model$LoadTabMsg),
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$button,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'loadButton', _1: true},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'loadNewButton', _1: true},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$LoadTabModel$ButtonNew),
+					_1: {ctor: '[]'}
+				}
+			},
+			{ctor: '[]'}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$p,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('New'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$LoadTab$rowify = function (row) {
+	return A2(
+		_elm_lang$html$Html$tr,
+		{ctor: '[]'},
+		A2(
+			_elm_lang$core$List$map,
+			_elm_lang$html$Html$td(
+				{ctor: '[]'}),
+			A2(
+				_elm_lang$core$List$map,
+				A2(
+					_elm_lang$core$Basics$flip,
+					F2(
+						function (x, y) {
+							return {ctor: '::', _0: x, _1: y};
+						}),
+					{ctor: '[]'}),
+				row)));
+};
+var _user$project$LoadTab$view = function (model) {
+	var _p0 = model.loadTabModel;
+	if (_p0.ctor === 'Root') {
+		return A2(
+			_elm_lang$html$Html$table,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$id('LoadTab'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _user$project$LoadTab$rowify(_user$project$LoadTab$newButton),
+				_1: {
+					ctor: '::',
+					_0: _user$project$LoadTab$rowify(_user$project$LoadTab$copyPasteButton),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$li,
-							{ctor: '[]'},
-							A2(_user$project$LoadTab$gDriveButton, model.gapiLoaded, model.pickerLoaded)),
-						_1: {ctor: '[]'}
+						_0: _user$project$LoadTab$rowify(_user$project$LoadTab$fileUploadButton),
+						_1: {
+							ctor: '::',
+							_0: _user$project$LoadTab$rowify(
+								_user$project$LoadTab$gDriveButton(model)),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
-			}
-		});
+			});
+	} else {
+		return _user$project$LoadTab$viewCopyPaste(_p0._0);
+	}
 };
 var _user$project$LoadTab_ops = _user$project$LoadTab_ops || {};
 _user$project$LoadTab_ops['=>'] = F2(
@@ -12970,8 +13099,66 @@ _user$project$LoadTab_ops['=>'] = F2(
 	});
 var _user$project$LoadTab$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'ButtonNew':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							tabs: A2(
+								F2(
+									function (x, y) {
+										return {ctor: '::', _0: x, _1: y};
+									}),
+								_user$project$EditTab$init,
+								model.tabs),
+							selectedTab: 0
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ButtonCopyPaste':
+				var _p2 = model.loadTabModel;
+				if (_p2.ctor === 'Root') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								loadTabModel: _user$project$LoadTabModel$CopyPaste('')
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								tabs: A2(
+									F2(
+										function (x, y) {
+											return {ctor: '::', _0: x, _1: y};
+										}),
+									_user$project$Import$importChart(_p2._0),
+									model.tabs),
+								selectedTab: 0
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			case 'ButtonToRoot':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{loadTabModel: _user$project$LoadTabModel$Root}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
 	});
 var _user$project$LoadTab$init = _user$project$LoadTabModel$Root;
 
@@ -13118,30 +13305,14 @@ var _user$project$Main$update = F2(
 							tabs: A2(_elm_community$list_extra$List_Extra$removeAt, _p3, model.tabs)
 						})));
 			case 'LoadTabMsg':
-				if (_p1._0.ctor === 'ButtonNew') {
-					return _user$project$Main$cmdNoneWrap(
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								tabs: A2(
-									F2(
-										function (x, y) {
-											return {ctor: '::', _0: x, _1: y};
-										}),
-									_user$project$EditTab$init,
-									model.tabs),
-								selectedTab: 0
-							}));
-				} else {
-					var _p4 = A2(_user$project$LoadTab$update, _p1._0, model);
-					var newModel = _p4._0;
-					var cmd = _p4._1;
-					return {
-						ctor: '_Tuple2',
-						_0: newModel,
-						_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Model$LoadTabMsg, cmd)
-					};
-				}
+				var _p4 = A2(_user$project$LoadTab$update, _p1._0, model);
+				var newModel = _p4._0;
+				var cmd = _p4._1;
+				return {
+					ctor: '_Tuple2',
+					_0: newModel,
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Model$LoadTabMsg, cmd)
+				};
 			default:
 				var _p5 = A2(_user$project$EditTab$update, _p1._0, model);
 				var newModel = _p5._0;
@@ -13159,7 +13330,7 @@ var _user$project$Main$init = {
 		_user$project$Model$Model,
 		_user$project$GDrive$NOT_LOADED,
 		_user$project$GDrive$NOT_LOADED,
-		_elm_lang$core$Maybe$Just(false),
+		_elm_lang$core$Maybe$Nothing,
 		_user$project$LoadTab$init,
 		{ctor: '[]'},
 		-1),

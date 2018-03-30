@@ -7,7 +7,7 @@ import LoadTabModel
 type alias Model =
     { gapiLoaded : GDrive.GapiStatus
     , pickerLoaded : GDrive.GapiStatus
-    , fileAPISupport : Maybe Bool
+    , pickerError : Maybe String
     , loadTabModel : LoadTabModel.Model
     , tabs : List EditTabModel.Model
     , selectedTab : Int

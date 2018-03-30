@@ -6,7 +6,10 @@ import Html.Events
 
 import Model exposing (Model, Msg(..))
 import LoadTabModel
+import EditTab
 import GDrive
+import Import
+import SpecialEvents
 
 init : LoadTabModel.Model
 init = LoadTabModel.Root
@@ -15,7 +18,24 @@ init = LoadTabModel.Root
 update : LoadTabModel.Msg -> Model -> (Model, Cmd LoadTabModel.Msg)
 update msg model =
     case msg of
-        _ ->
+        LoadTabModel.ButtonNew ->
+            ({ model 
+                | tabs = (::) EditTab.init model.tabs
+                , selectedTab = 0
+            }, Cmd.none) 
+        
+        LoadTabModel.ButtonCopyPaste ->
+            case model.loadTabModel of 
+                LoadTabModel.Root ->
+                    ({model | loadTabModel = LoadTabModel.CopyPaste ""}, Cmd.none)
+                LoadTabModel.CopyPaste str ->
+                    ({ model 
+                        | tabs = (::) (Import.importChart str) model.tabs
+                        , selectedTab = 0
+                    }, Cmd.none) 
+        LoadTabModel.ButtonToRoot ->
+            ({model | loadTabModel = LoadTabModel.Root}, Cmd.none)
+        _ -> 
             (model, Cmd.none)
 
 
@@ -26,12 +46,24 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Html.ul [] 
-        [ Html.li [] (newButton)
-        , Html.li [] (copyPasteButton)
-        , Html.li [] (fileUploadButton)
-        , Html.li [] (gDriveButton model.gapiLoaded model.pickerLoaded)
-        ]
+    case model.loadTabModel of
+        LoadTabModel.Root ->
+            Html.table [Html.Attributes.id "LoadTab"] 
+                [ rowify (newButton)
+                , rowify (copyPasteButton)
+                , rowify (fileUploadButton)
+                , rowify (gDriveButton model)
+                ]
+        LoadTabModel.CopyPaste str ->
+            viewCopyPaste str
+
+rowify : List (Html Msg) -> Html Msg
+rowify row =
+        row
+            |> List.map (flip (::) [])
+            |> List.map (Html.td [])
+            |> Html.tr []
+
 
 newButton : List (Html Msg)
 newButton =
@@ -40,10 +72,12 @@ newButton =
             [ ("loadButton",True)
             , ("loadNewButton",True)
             ]
-        , Html.Events.onClick (Model.LoadTabMsg LoadTabModel.ButtonNew)
+        , Html.Events.onClick (LoadTabModel.ButtonNew)
         ] []
-    , Html.text "New"
+    , Html.p [] [Html.text "New"]
     ]
+    |> List.map (Html.map Model.LoadTabMsg)
+
 
 copyPasteButton : List (Html Msg)
 copyPasteButton =
@@ -52,10 +86,12 @@ copyPasteButton =
             [ ("loadButton",True)
             , ("loadCopyPasteButton",True)
             ]
-        , Html.Events.onClick (Model.LoadTabMsg LoadTabModel.ButtonCopyPaste)
+        , Html.Events.onClick (LoadTabModel.ButtonCopyPaste)
         ] []
-    , Html.text "Copy/Paste"
+    , Html.p [] [Html.text "Copy/Paste"]
     ]
+    |> List.map (Html.map Model.LoadTabMsg)
+
 
 fileUploadButton : List (Html Msg)
 fileUploadButton =
@@ -66,34 +102,18 @@ fileUploadButton =
             ]
         , Html.Attributes.disabled True
         ] []
-    , Html.text "File upload"
+    , Html.p [] [Html.text "Web Platform file upload"]
     ]
 
-gDriveButton : GDrive.GapiStatus -> GDrive.GapiStatus -> List (Html Msg)
-gDriveButton gapiLoaded pickerLoaded =
+
+gDriveButton : Model -> List (Html Msg)
+gDriveButton model =
     let 
-        extraAttribute =
-            case (gapiLoaded,pickerLoaded) of 
-                (GDrive.NOT_LOADED,_) ->
-                    Html.Attributes.disabled True
-                (GDrive.SIGNED_OUT,_) ->
-                    Html.Events.onClick 
-                        (GapiMsg (GDrive.SigninStatusClick True))
-                (GDrive.SIGNED_IN,GDrive.NOT_LOADED) ->
-                    Html.Attributes.disabled True
-                (GDrive.SIGNED_IN,_) ->
-                    Html.Events.onClick
-                        (GapiMsg GDrive.OpenPicker)
+        extraAttribute = model
+            |> GDrive.viewButtonAttribute
+            |> Html.Attributes.map GapiMsg 
         label =
-            case (gapiLoaded,pickerLoaded) of
-                (GDrive.NOT_LOADED,_) ->
-                    "Google Drive support loading..."
-                (GDrive.SIGNED_OUT,_) ->
-                    "Sign in with Google Drive"
-                (GDrive.SIGNED_IN,GDrive.NOT_LOADED) ->
-                    "Google Drive picker missing. Huh."
-                (GDrive.SIGNED_IN,_) ->
-                    "Open from Google Drive"
+            GDrive.viewStatusText model
     in
         [ Html.button
             [ Html.Attributes.classList
@@ -102,8 +122,33 @@ gDriveButton gapiLoaded pickerLoaded =
                 ]
             , extraAttribute
             ] []
-        , Html.text label
+        , Html.p [] [Html.text label]
         ]
+
+
+viewCopyPaste : String -> Html Msg
+viewCopyPaste str =
+    Html.form 
+        [ Html.Attributes.id "LoadTab"
+        , Html.Events.onSubmit LoadTabModel.ButtonCopyPaste 
+        ] 
+        [ Html.button 
+            [ SpecialEvents.onClickNoDefault LoadTabModel.ButtonToRoot
+            , Html.Attributes.classList
+                [ ("loadButton",True)
+                , ("loadBackButton",True)
+                ]
+            ] []
+        , Html.textarea [] []
+        , Html.button 
+            [ SpecialEvents.onClickNoDefault LoadTabModel.ButtonCopyPaste
+            , Html.Attributes.classList
+                [ ("loadButton",True)
+                , ("loadCopyPasteButton",True)
+                ]
+            ] []
+        ]
+        |> Html.map Model.LoadTabMsg
 
 
 viewLabel : Bool -> Html Msg

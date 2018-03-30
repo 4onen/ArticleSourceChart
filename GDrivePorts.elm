@@ -14,3 +14,9 @@ port signinStatusClick : Bool -> Cmd msg
 
 --Send to JSland to open the GDrive file picker
 port openPicker : () -> Cmd msg
+
+--Hear from JSland the picked file, if retrieved
+port pickerFile : (String -> msg) -> Sub msg
+
+--Hear from JSland about file picker error
+port pickerError : (String -> msg) -> Sub msg
