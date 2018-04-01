@@ -5,9 +5,9 @@ import Html.Attributes
 import List.Extra
 
 import GDrive
+import Import
 
 import LoadTab
-import LoadTabModel
 import EditTab
 
 import Model exposing (Model, Msg(..))
@@ -35,6 +35,11 @@ init =
 update : Msg -> Model -> (Model, Cmd Msg)
 update message model =
     case message of
+        GapiMsg (GDrive.PickerFile str) ->
+            ({ model 
+                | tabs = (::) (Import.importChart str) model.tabs
+                , selectedTab = 0
+             }, Cmd.none) 
         GapiMsg msg ->
             let 
                 (newModel, cmd) = GDrive.update msg model

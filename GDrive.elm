@@ -54,7 +54,7 @@ update message model =
         OpenPicker ->
             (model, GDrivePorts.openPicker ())
         PickerFile str ->
-            (model, Cmd.none)
+            (model, Cmd.none) --Should never run.
         PickerError str ->
             ({model | pickerError = Just str}, Cmd.none)
 

@@ -117,9 +117,9 @@ viewExportBox model m =
 
 encode2Tuple : (a -> Value) -> (b -> Value) -> ( a, b ) -> Value
 encode2Tuple enc1 enc2 ( val1, val2 ) =
-    Json.Encode.list
-        [ enc1 val1
-        , enc2 val2
+    Json.Encode.object
+        [ ("left",enc1 val1)
+        , ("right",enc2 val2)
         ]
 
 
