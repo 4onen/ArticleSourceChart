@@ -1,4 +1,162 @@
-p,h1,h2,h3,h4,h5,h6{
-    line-height: 1em;
+* {
     margin: 0;
+    padding: 0;
 }
+
+html, body {
+    height: 100%;
+}
+
+#ElmApp {
+    width: 100%;
+    height: 100%;
+}
+
+ul {
+    text-align: center;
+}
+
+/* Tab row */
+nav {
+    margin: 0;
+    padding: 0.1em 0.1em 0 0.1em;
+    border-bottom: 0.1em solid black;
+}
+
+nav button {
+    display: inline-block;
+    height: 4em;
+    background-color: lightblue;
+    border-color: lightblue;
+    border-bottom-color: inset;
+    border-radius: 10% 10% 0 0;
+}
+
+nav button:disabled {
+    background-color: white;
+}
+
+nav button button {
+    height: 1em;
+    border: none;
+    border-radius: 1em;
+}
+
+nav button button:hover {
+    background-color: aliceblue;
+    font-weight: bold;
+}
+
+nav button:disabled button {
+    background-color: white;
+}
+
+nav button:disabled button:hover {
+    background-color: lightblue;
+}
+/* Tab row end */
+
+
+
+
+/* File page */
+#LoadTab {
+    margin: 0 auto;
+    max-width: 36em;
+}
+
+#LoadTab td {
+    vertical-align: middle;
+}
+
+#LoadTab p {
+    display: block;
+}
+
+#LoadTab textarea {
+    width: 20em;
+}
+
+.loadButton {
+    height: 5em;
+    width: 8em;
+    background: lightblue;
+    border-radius: 1em;
+    border: 0.5em outset lightcyan;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-blend-mode: soft-light;
+}
+
+.loadNewButton {
+    background-image: url(imgs/new.svg);
+}
+
+.loadCopyPasteButton {
+    background-image: url(imgs/copy.svg);
+}
+
+.loadFileUploadButton {
+    background-image: url(imgs/upload.svg);
+}
+
+.loadGDriveButton {
+    background-image: url(imgs/gdrive.svg);
+}
+
+.loadBackButton {
+    background-image: url(imgs/back.svg);
+}
+
+.loadGDriveSignInButton {
+    background: blue;
+    border: 0.5em none blue;
+}
+
+.loadButton:hover {
+    background-color: lightcyan;
+}
+
+.loadButton:hover:active {
+    background-color: lightskyblue;
+    border-color: lightskyblue;
+    border-style: inset;
+}
+
+.loadButton:disabled {
+    background-color: lightslategray;
+    border-color: lightslategray;
+}
+
+.loadButton:disabled:hover {
+    background-color: lightslategray;
+    border-color: lightslategray;
+}
+/* File page end */
+
+/* Edit page */
+.ArticleDrawBox {
+    position: absolute;
+    height: 8em;
+    width: 8em;
+    overflow: hidden;
+    border: 1px solid black;
+    border-radius: 0.2em;
+}
+/* Tool row */
+#ToolbarToolDiv {
+    font-size: 200%
+}
+
+#ToolbarToolDiv *{
+    padding: 0.4em;
+}
+
+#ToolbarToolDiv button {
+    background-color: white;
+}
+
+#ToolbarToolDiv button:disabled {
+    background-color: wheat;
+}
+/* Tool row end */

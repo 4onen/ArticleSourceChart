@@ -1,12 +1,11 @@
-module Linked exposing (Linked, insertLink, removeLink)
+module Linked exposing (..)
 
 import Set exposing (Set)
-import ArticleId exposing (ArticleId)
 
+type alias ArticleId = Int
 
 type alias Linked a =
     { a | links : Set ArticleId }
-
 
 insertLink : ArticleId -> Linked a -> Linked a
 insertLink target linkedRecord =

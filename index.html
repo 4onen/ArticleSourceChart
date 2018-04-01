@@ -1,29 +1,120 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>Article Sourcing Graph</title>
-    <style>
-html,head,body {height:100%;padding:0;margin:0;}
-body {font-family: calibri, helvetica, arial, sans-serif;}
-#appZone {height: 100%;}
-    </style>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <script type="text/javascript" src="main.js"></script>
-    <script type="text/javascript" src="menu.js"></script>
-</head>
-<body>
-    <div id="appZone"></div>
-    <script type="text/javascript">
-window['MyApp'] = Elm.Menu.embed(document.getElementById("appZone"));
-window.MyApp.ports.launch.subscribe(function(dataString){
-    var data = dataString
-    if(dataString !== ""){
-        data = JSON.parse(data);
-    }
-    data = (data==="") ? null : data
-    window['MyApp'] = Elm.Main.embed(document.getElementById("appZone"),data);
-});
-    </script>
-</body>
+    <head>
+        <title id="title">Article Source Chart</title>
+        <meta charset='utf-8' />
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script type="text/javascript">
+            window.___gcfg={
+                parsetags: 'explicit',
+                lang: 'en-US'
+            };
+        </script>
+        <script type="text/javascript" src="main.js"></script>
+    </head>
+    <body>
+        <div id="ElmApp"></div>
+        <script type="text/javascript">
+            var app = Elm.Main.embed(document.getElementById("ElmApp"));
+            
+            var appId = '76504421127';
+            var oauthToken;
+
+            function ongapiLoad() {
+                app.ports.gapiLoaded.send(true)
+                gapi.load('client:auth2', { 
+                    callback: initClient,
+                    onerror: function(err){
+                        alert('gapi.client failed to load!');
+                        console.error('gapi.client failed to load. Error:',err);
+                    },
+                    timeout: 5000,//5 seconds
+                    ontimeout: function(){
+                        console.error('Timeout connecting to gapi server. (>5000ms)');
+                    }
+                });
+
+                gapi.load('picker', { 
+                    callback: initgapiPicker,
+                    onerror: function(err){
+                        alert('gapi.picker failed to load!');
+                        console.error('gapi.picker failed to load. Error:',err);
+                    },
+                    timeout: 5000,//5 seconds
+                    ontimeout: function(){
+                        console.error('Timeout connecting to gapi picker. (>5000ms)');
+                    }
+                });
+            }
+
+            function initClient() {
+                gapi.client.init({
+                    clientId: "76504421127-vsvnp127mbr6e0bp2o4d41is58ohcbpc.apps.googleusercontent.com",
+                    discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+                    scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.install'
+                }).then(function () {
+                    // Listen for sign-in state changes.
+                    gapi.auth2.getAuthInstance().isSignedIn.listen(app.ports.updateSigninStatus.send);
+
+                    // Handle the initial sign-in state.
+                    app.ports.updateSigninStatus.send(gapi.auth2.getAuthInstance().isSignedIn.get());
+
+                    app.ports.signinStatusClick.subscribe(function(intoAcc){
+                        //intoAcc signs in if true, out if false.
+                        if(intoAcc) {
+                            gapi.auth2.getAuthInstance().signIn();
+                        }else{
+                            gapi.auth2.getAuthInstance().signOut();
+                        }
+                    })
+                });
+            }
+
+            function initgapiPicker() {
+                app.ports.gapiPickerLoaded.send(true);
+
+                app.ports.openPicker.subscribe(function(){
+                    var view = new google.picker.View(google.picker.ViewId.DOCS);
+                    view.setMimeTypes("application/json");
+                    var picker = new google.picker.PickerBuilder()
+                        .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                        .setOAuthToken(gapi.client.getToken().access_token)
+                        .addView(view)
+                        .addView(new google.picker.DocsUploadView())
+                        .setCallback(pickerCallback)
+                        .build();
+                    picker.setVisible(true);
+                });
+            }
+
+            function pickerCallback(val){
+                if(val && val.docs && val.action == "picked"){
+                    let fileIdArr = val.docs.map(function(fileMeta){
+                        return fileMeta.id
+                    });
+
+                    fileIdArr.forEach(fileId => {
+                        gapi.client.drive.files.get({fileId: fileId,alt: 'media'})
+                            .then(function(result){
+                                console.log("I got a result!",result);
+                                if(result && result.headers && (result.headers["Content-Type"] == "application/json") && result.body){
+                                    app.ports.pickerFile.send(result.body);
+                                }else if(result && result.headers && result.headers["Content-Type"] && (result.headers["Content-Type"] != "application/json")){
+                                    app.ports.pickerError.send("Incorrect file MIME type: "+result.headers["Content-Type"]);
+                                }else{
+                                    app.ports.pickerError.send("Malformed response: "+JSON.stringify(result));
+                                }
+                            },function(err){
+                                console.error("I got an error!",err);
+                                app.ports.pickerError.send("Error: "+JSON.stringify(err))
+                            });
+                    });
+                }
+            }
+        </script>
+        <script type="text/javascript" src="https://apis.google.com/js/api.js" 
+            onload="this.onload=function(){};ongapiLoad();" 
+            onreadystatechange="if (this.readyState === 'complete') this.onload()">
+        </script>
+    </body>
 </html>

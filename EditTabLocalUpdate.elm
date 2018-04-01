@@ -1,58 +1,42 @@
-module Update exposing (..)
-
---Libs
+module EditTabLocalUpdate exposing (localUpdate)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
 
-
---Project specific
-
+import EditTabModel exposing (..)
 import Point exposing (Point)
-import Linked exposing (Linked)
 import Drag exposing (Drag)
-import Article exposing (Article, ArticleField(..))
-import ArticleId exposing (ArticleId)
-import Model exposing (..)
-import Msg exposing (..)
+import Linked exposing (Linked)
 
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    ( updateModel msg model
-    , Cmd.none
-    )
-
-
-updateModel : Msg -> Model -> Model
-updateModel msg model =
+localUpdate : Msg -> Model -> Model
+localUpdate msg model =
     case msg of
         NameChange str ->
-            { model | name = str }
-
+            { model | chartName = str }
+        
         SwitchTo tgt ->
             updateSwitchCommand tgt model
-
+        
         DrawspaceClick pt ->
             case model.command of
                 Add Nothing ->
                     updateAddArticle pt model
-
+                
                 --Cancel export
                 Exporting m ->
                     { model | command = m.previousCommand }
-
+                
                 --WTF How?!
                 Add _ ->
                     model
-
+                
                 --Some other tool misclick. Ignore.
                 _ ->
                     model
-
+        
         Select id pt ->
             updateSelect id pt model
-
+        
         ChangeContent field ->
             case model.command of
                 Add (Just id) ->
@@ -77,7 +61,7 @@ updateModel msg model =
 
                 _ ->
                     model
-
+        
         DragTo pt ->
             { model
                 | command =
@@ -88,7 +72,6 @@ updateModel msg model =
                         _ ->
                             model.command
             }
-
 
 {-| Change the active command
 -}
@@ -105,14 +88,13 @@ updateSwitchCommand tgt model =
             { model | command = Delete }
 
         ToLinking ->
-            { model | command = Linking (Nothing) }
+            { model | command = Linking Nothing }
 
         ToUnlinking ->
-            { model | command = Unlinking (Nothing) }
+            { model | command = Unlinking Nothing }
 
         ToExporting ->
-            { model | command = Exporting <| ExportModel (model.command) Nothing }
-
+            { model | command = Exporting <| ExportModel (model.command) }
 
 {-| Pass an article selection to its respective handling command,
 depending on the currently active command.
@@ -152,7 +134,6 @@ updateSelect id pt model =
         Dragging _ ->
             model
 
-
 updateDragEnd : Model -> Model
 updateDragEnd model =
     case model.command of
@@ -167,7 +148,6 @@ updateDragEnd model =
         _ ->
             { model | command = Dragging Nothing }
 
-
 updateAddArticle : Point -> Model -> Model
 updateAddArticle pt ({ articles, command, nextId } as model) =
     { model
@@ -180,18 +160,19 @@ updateAddArticle pt ({ articles, command, nextId } as model) =
         , nextId = model.nextId + 1
     }
 
-
+updateLinkArticle : ArticleId -> ArticleId -> Model -> Model
 updateLinkArticle id1 id2 model =
     { model
         | articles =
             if id1 == id2 then
                 model.articles
             else
-                model.articles |> Dict.update id1 (Maybe.map (\a1 -> Linked.insertLink id2 a1))
+                model.articles 
+                    |> Dict.update id1 (Maybe.map (\a1 -> Linked.insertLink id2 a1))
         , command = Linking Nothing
     }
 
-
+updateUnlinkArticle : ArticleId -> ArticleId -> Model -> Model
 updateUnlinkArticle id1 id2 model =
     { model
         | articles =
